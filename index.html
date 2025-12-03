@@ -115,7 +115,7 @@
         <div class="p-5 border-b border-gray-100 bg-slate-50 flex justify-between items-center sticky top-0 z-20 md:static">
             <div>
                 <h1 class="text-xl font-bold text-slate-800"><i class="fas fa-layer-group mr-2 text-blue-900"></i>Team Marketing Hub</h1>
-                <p class="text-xs text-gray-500 mt-1">Mobile V4.5 - Share Fix</p>
+                <p class="text-xs text-gray-500 mt-1">Mobile V4.6 - Insta Fix</p>
             </div>
             <button onclick="document.getElementById('preview-section').scrollIntoView({behavior: 'smooth'})" class="md:hidden text-blue-900 text-sm font-bold border border-blue-200 p-2 rounded bg-white">
                 <i class="fas fa-eye"></i> View
@@ -159,7 +159,7 @@
                         <select id="savedAgentSelect" class="flex-1 text-xs border border-gray-300 rounded p-1.5 bg-white outline-none text-gray-700">
                             <option value="">Select a team member...</option>
                         </select>
-                        <button id="deleteAgentBtn" class="hidden text-xs text-red-500 hover:bg-red-50 p-1.5 rounded border border-transparent hover:border-red-200" title="Delete from Team Hub">
+                        <button id="deleteAgentBtn" class="hidden text-xs text-red-500 hover:bg-red-50 p-1.5 rounded border border-transparent hover:border-red-200" title="Delete from Hub">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -1332,16 +1332,6 @@
             document.getElementById('socialLi').value = a.socialLi || '';
             document.getElementById('primaryColor').value = a.primaryColor || '#0d3b66';
             document.getElementById('secondaryColor').value = a.secondaryColor || '#8d99ae';
-
-            state.agentName = a.name;
-            state.agentTitle = a.title || '';
-            state.agentContact = a.contact || '';
-            state.companyNmls = a.companyNmls || '';
-            state.socialInsta = a.socialInsta || '';
-            state.socialFb = a.socialFb || '';
-            state.socialLi = a.socialLi || '';
-            state.primaryColor = a.primaryColor || '#0d3b66';
-            state.secondaryColor = a.secondaryColor || '#8d99ae';
 
             if (a.photo) {
                 state.images.agent = await loadImage(a.photo);
