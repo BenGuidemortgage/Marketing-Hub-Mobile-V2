@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ben Harman Marketing Hub</title>
+    <!-- Add Icon Links for Mobile Home Screen -->
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="icon" type="image/png" href="icon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800;900&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Roboto', sans-serif; background-color: #f3f4f6; }
+        h1, h2, h3, .brand-font { font-family: 'Montserrat', sans-serif; }
+        
+        /* Desktop scrollbar */
+        @media (min-width: 768px) {
+            .controls-panel::-webkit-scrollbar { width: 6px; }
+            .controls-panel::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+        }
+        
+        .canvas-shadow {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .input-group { transition: all 0.3s ease-in-out; }
+        .hidden-group { display: none; }
+        
+        /* Loading & Error Overlays */
+        .status-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Modal for Saving Images */
+        #saveModal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #saveModal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        #finalImage {
+            max-width: 100%;
+            max-height: 70vh;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .hidden { display: none !important; }
+
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 150;
+            left: 50%;
+            bottom: 30px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.5s, bottom 0.5s;
+        }
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px;
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row md:h-screen md:overflow-hidden bg-gray-100">
+
+    <!-- SAVE MODAL (Popup for Mobile) -->
+    <div id="saveModal">
+        <div class="bg-white p-4 rounded-lg w-full max-w-sm text-center mb-4 relative">
+            <h3 class="font-bold text-gray-800 text-lg mb-1">Save Your Image</h3>
+            <p class="text-sm text-gray-500 mb-3">Long Press (Tap & Hold) the image below, then select <strong>"Save to Photos"</strong></p>
+            <button id="closeModalBtn" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <img id="finalImage" src="" alt="Generated Post">
+    </div>
+
+    <!-- LEFT PANEL: CONTROLS -->
+    <div class="w-full md:w-96 bg-white flex flex-col z-10 shadow-lg md:h-full md:border-r border-gray-200 order-2 md:order-1">
+        
+        <div class="p-5 border-b border-gray-100 bg-slate-50 flex justify-between items-center sticky top-0 z-20 md:static">
+            <div>
+                <h1 class="text-xl font-bold text-slate-800"><i class="fas fa-layer-group mr-2 text-blue-900"></i>Marketing Hub</h1>
+                <p class="text-xs text-gray-500 mt-1">Mobile V3</p>
+            </div>
+            <button onclick="document.getElementById('preview-section').scrollIntoView({behavior: 'smooth'})" class="md:hidden text-blue-900 text-sm font-bold border border-blue-200 p-2 rounded bg-white">
+                <i class="fas fa-eye"></i> View
+            </button>
+        </div>
+
+        <div class="flex-1 p-5 controls-panel space-y-6 md:overflow-y-auto">
+            
+            <!-- SECTION: TEMPLATE SELECTOR -->
+            <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                <label class="block text-xs font-bold text-blue-900 mb-1 uppercase tracking-wider">Select Campaign</label>
+                <div class="relative">
+                    <select id="templateSelect" class="w-full p-2 pl-9 border border-blue-200 rounded text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-900 focus:border-blue-900 appearance-none bg-white outline-none">
+                        <option value="purchase">Purchase Closing</option>
+                        <option value="refinance">Refinance Success</option>
+                        <option value="openhouse">Open House Flyer</option>
+                    </select>
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-blue-900">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-500">
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: AGENT INFO -->
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">My Profile</h3>
+                    <button id="clearProfileBtn" class="text-[10px] text-red-400 hover:text-red-600 underline cursor-pointer">Reset Profile</button>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">My Headshot</label>
+                        <input type="file" id="agentPhotoInput" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        <p class="text-[10px] text-green-600 mt-1 hidden" id="agentPhotoSaved"><i class="fas fa-check-circle"></i> Loaded</p>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">Company Logo</label>
+                        <input type="file" id="logoInput" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        <p class="text-[10px] text-green-600 mt-1 hidden" id="logoSaved"><i class="fas fa-check-circle"></i> Loaded</p>
+                    </div>
+                </div>
+
+                <input type="text" id="agentName" value="Ben Harman" class="w-full p-2 border rounded text-sm font-bold bg-gray-50 text-gray-700 border-gray-200 focus:bg-white focus:border-blue-500 outline-none transition-colors" placeholder="Your Name">
+                <input type="text" id="agentTitle" value="Mortgage Loan Originator" class="w-full p-2 border rounded text-sm bg-gray-50 text-gray-700 border-gray-200 focus:bg-white focus:border-blue-500 outline-none transition-colors" placeholder="Your Title">
+                <input type="text" id="agentContact" value="(419)-266-6229 | NMLS# 2599175" class="w-full p-2 border rounded text-sm bg-gray-50 text-gray-700 border-gray-200 focus:bg-white focus:border-blue-500 outline-none transition-colors" placeholder="Contact Info">
+            </div>
+
+            <hr class="border-gray-100">
+
+            <!-- SECTION: MAIN CONTENT -->
+            <div class="space-y-3">
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Post Content</h3>
+                
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1" id="mainPhotoLabel">Main Photo (Clients/House)</label>
+                    <input type="file" id="mainPhotoInput" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Status Banner</label>
+                    <input type="text" id="statusText" value="JUST CLOSED!" class="w-full p-2 border rounded text-sm font-bold text-green-700 border-gray-300 focus:border-green-600 outline-none" placeholder="e.g. JUST CLOSED!">
+                </div>
+
+                <div id="storyInputGroup" class="input-group">
+                    <label class="block text-xs font-medium text-gray-700 mb-1" id="storyLabel">Borrower Story</label>
+                    <textarea id="borrowerStory" rows="4" class="w-full p-2 border rounded text-sm border-gray-300 focus:border-blue-500 outline-none" placeholder="Tell the story...">Another smooth closing! We successfully navigated a complex self-employed application and got the Smith family into their dream home in just 28 days.</textarea>
+                </div>
+
+                <div id="openHouseDescGroup" class="input-group hidden-group">
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Property Description</label>
+                    <textarea id="propertyDesc" rows="4" class="w-full p-2 border rounded text-sm border-gray-300 focus:border-blue-500 outline-none" placeholder="Beautiful 4 bed, 3 bath...">Stunning turn-key home in the heart of the city! Features a gourmet kitchen, hardwood floors, and a spacious backyard oasis.</textarea>
+                </div>
+            </div>
+
+            <hr class="border-gray-100">
+
+            <!-- SECTION: DYNAMIC SECONDARY BOX -->
+            <div id="secondarySection" class="space-y-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                
+                <div id="partnerInputs" class="input-group">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Referral Partner</h3>
+                        <label class="inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="partnerToggle" class="sr-only peer" checked>
+                            <div class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-900"></div>
+                        </label>
+                    </div>
+                    
+                    <div id="partnerControls" class="space-y-2 transition-all duration-300">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-medium text-gray-700 mb-1">Headshot</label>
+                                <input type="file" id="partnerPhotoInput" accept="image/*" class="w-full text-[10px] text-slate-500 file:mr-1 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-medium text-gray-700 mb-1">Logo</label>
+                                <input type="file" id="partnerLogoInput" accept="image/*" class="w-full text-[10px] text-slate-500 file:mr-1 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-[10px] file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                            </div>
+                        </div>
+                        
+                        <input type="text" id="partnerName" value="Sarah Chang" class="w-full p-2 border rounded text-sm font-bold border-gray-300 outline-none" placeholder="Partner Name">
+                        <input type="text" id="partnerTitle" value="Realtor | City Realty" class="w-full p-2 border rounded text-sm border-gray-300 outline-none" placeholder="Partner Title/Company">
+                        <input type="text" id="partnerContact" value="555.123.4567 | sarah@example.com" class="w-full p-2 border rounded text-sm border-gray-300 outline-none" placeholder="Partner Phone/Email">
+                        <input type="text" id="partnerShoutout" value="Huge thanks to Sarah for trusting us with her clients!" class="w-full p-2 border rounded text-sm border-gray-300 outline-none" placeholder="Short shoutout (Purchase only)">
+                    </div>
+                </div>
+
+                <div id="refiInputs" class="input-group hidden-group">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Savings Breakdown</h3>
+                    <div class="space-y-2">
+                         <input type="text" id="refiTitle" value="MONTHLY SAVINGS" class="w-full p-2 border rounded text-sm font-bold border-gray-300 outline-none" placeholder="Header (e.g. Monthly Savings)">
+                         <textarea id="refiDetails" rows="3" class="w-full p-2 border rounded text-sm border-gray-300 outline-none" placeholder="Details...">We lowered their rate by 1.5% and saved them $450 every single month!</textarea>
+                    </div>
+                </div>
+
+                <div id="openHouseInputs" class="input-group hidden-group">
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Event Details</h3>
+                    <div class="space-y-2">
+                        <input type="text" id="ohDate" value="Sunday, Oct 24th" class="w-full p-2 border rounded text-sm font-bold border-gray-300 outline-none" placeholder="Date">
+                        <input type="text" id="ohTime" value="1:00 PM - 3:00 PM" class="w-full p-2 border rounded text-sm border-gray-300 outline-none" placeholder="Time">
+                        <input type="text" id="ohAddress" value="123 Maple Avenue, Springfield" class="w-full p-2 border rounded text-sm border-gray-300 outline-none" placeholder="Address">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="space-y-3 pt-2">
+                 <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Brand Theme</h3>
+                 <div class="flex gap-4">
+                     <div class="flex-1">
+                         <label class="block text-xs text-gray-500 mb-1">Primary (Navy)</label>
+                         <input type="color" id="primaryColor" value="#0d3b66" class="h-8 w-full cursor-pointer rounded border border-gray-200">
+                     </div>
+                     <div class="flex-1">
+                         <label class="block text-xs text-gray-500 mb-1">Secondary (Grey)</label>
+                         <input type="color" id="secondaryColor" value="#8d99ae" class="h-8 w-full cursor-pointer rounded border border-gray-200">
+                     </div>
+                 </div>
+            </div>
+
+        </div>
+        
+        <div class="p-4 border-t border-gray-200 bg-white space-y-3 sticky bottom-0 z-20 md:static">
+            <button id="downloadBtn" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                <i class="fas fa-download"></i> Download Image
+            </button>
+            
+            <button id="saveToolBtn" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2 px-4 rounded-lg border border-slate-300 transition-colors flex items-center justify-center gap-2">
+                <i class="fas fa-save"></i> Save & Download Tool
+            </button>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL: PREVIEW -->
+    <div id="preview-section" class="flex-1 bg-gray-200 flex items-center justify-center p-4 md:p-10 order-1 md:order-2 md:h-full md:overflow-auto relative min-h-[400px]">
+        <div class="absolute inset-0 opacity-5 pointer-events-none" style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 20px 20px;"></div>
+        
+        <!-- The Canvas -->
+        <canvas id="postCanvas" width="1080" height="1080" class="w-full max-w-[500px] md:max-w-full h-auto shadow-2xl bg-white rounded-sm">
+            Your browser does not support the Canvas API. Please open in Chrome or Safari.
+        </canvas>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="status-overlay">
+            <i class="fas fa-spinner fa-spin text-4xl text-blue-900 mb-4"></i>
+            <h2 class="text-xl font-bold text-slate-700">Loading App...</h2>
+            <p class="text-sm text-gray-500 mt-2">Initializing...</p>
+        </div>
+        
+        <!-- Error Overlay -->
+        <div id="error-overlay" class="status-overlay hidden">
+            <i class="fas fa-exclamation-triangle text-4xl text-yellow-500 mb-4"></i>
+            <h2 class="text-xl font-bold text-slate-700">Security Restriction</h2>
+            <p class="text-sm text-gray-500 mt-2 max-w-xs mx-auto">
+                App blocked. Please try opening in a different browser.
+            </p>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast">Notification Message</div>
+
+<script>
+    // --- Global Error Handler ---
+    window.onerror = function(message, source, lineno, colno, error) {
+        console.error("Global Error Caught:", message);
+        // Force hide loader on error
+        const loader = document.getElementById('loading-overlay');
+        if(loader) loader.classList.add('hidden');
+    };
+
+    (function() {
+        // --- SAFE STORAGE WRAPPER ---
+        const safeStorage = {
+            getItem: function(key) {
+                try { return localStorage.getItem(key); } catch (e) { return null; }
+            },
+            setItem: function(key, value) {
+                try { localStorage.setItem(key, value); } catch (e) {}
+            },
+            removeItem: function(key) {
+                try { localStorage.removeItem(key); } catch (e) {}
+            }
+        };
+
+        // --- CONFIGURATION ---
+        const canvas = document.getElementById('postCanvas');
+        const ctx = canvas.getContext('2d');
+        const saveModal = document.getElementById('saveModal');
+        const finalImage = document.getElementById('finalImage');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        
+        // --- BASE64 PLACEHOLDERS (No Internet Required) ---
+        const DATA_URI_GRAY = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNjYmQ1ZTEiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9ImFyaWFsIiBmb250LXNpemU9IjMwIiBmaWxsPSIjZmZmIiBkeT0iLjNlbSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UGhvdG88L3RleHQ+PC9zdmc+';
+        const DATA_URI_NAVY = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiMwZDNiNjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9ImFyaWFsIiBmb250LXNpemU9IjMwIiBmaWxsPSIjZmZmIiBkeT0iLjNlbSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QkguPC90ZXh0Pjwvc3ZnPg==';
+
+        const SAVED_AGENT_PHOTO_SRC = ''; 
+        const SAVED_LOGO_SRC = '';      
+        
+        // Use Base64 defaults if no saved image
+        const defaultAgentPhoto = SAVED_AGENT_PHOTO_SRC || DATA_URI_NAVY;
+        const defaultPartnerPhoto = DATA_URI_GRAY;
+        
+        const state = {
+            template: 'purchase',
+            agentName: document.getElementById('agentName').value,
+            agentTitle: document.getElementById('agentTitle').value,
+            agentContact: document.getElementById('agentContact').value,
+            statusText: document.getElementById('statusText').value,
+            borrowerStory: document.getElementById('borrowerStory').value,
+            partnerEnabled: true,
+            partnerName: document.getElementById('partnerName').value,
+            partnerTitle: document.getElementById('partnerTitle').value,
+            partnerContact: document.getElementById('partnerContact').value,
+            partnerShoutout: document.getElementById('partnerShoutout').value,
+            refiTitle: document.getElementById('refiTitle').value,
+            refiDetails: document.getElementById('refiDetails').value,
+            propertyDesc: document.getElementById('propertyDesc').value,
+            ohDate: document.getElementById('ohDate').value,
+            ohTime: document.getElementById('ohTime').value,
+            ohAddress: document.getElementById('ohAddress').value,
+            primaryColor: document.getElementById('primaryColor').value,
+            secondaryColor: document.getElementById('secondaryColor').value,
+            images: { agent: null, main: null, partner: null, partnerLogo: null, logo: null }
+        };
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.className = "show";
+            setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        // --- ROBUST IMAGE LOADER (With Timeout) ---
+        function loadImage(src) {
+            return new Promise(resolve => {
+                if (!src || src.length < 10) return resolve(null);
+                
+                const img = new Image();
+                img.crossOrigin = "anonymous"; 
+                
+                let isResolved = false;
+                
+                img.onload = () => {
+                    if(!isResolved) { isResolved = true; resolve(img); }
+                };
+                
+                img.onerror = () => {
+                    if (img.crossOrigin === "anonymous") {
+                        img.crossOrigin = null;
+                        img.src = src; // Retry
+                    } else {
+                        if(!isResolved) { isResolved = true; resolve(null); }
+                    }
+                };
+
+                setTimeout(() => {
+                    if(!isResolved) { 
+                        isResolved = true; 
+                        resolve(null); 
+                    }
+                }, 1500);
+
+                img.src = src;
+            });
+        }
+
+        function wrapText(context, text, x, y, maxWidth, initialFontSize, fontFace, maxLines) {
+            context.font = `${initialFontSize}px ${fontFace}`;
+            const words = text.split(' ');
+            let lines = [];
+            let line = '';
+
+            for(let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = context.measureText(testLine);
+                const testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    lines.push(line);
+                    line = words[n] + ' ';
+                } else {
+                    line = testLine;
+                }
+            }
+            lines.push(line);
+
+            if (maxLines && lines.length > maxLines) {
+                const newFontSize = initialFontSize - 2;
+                if (newFontSize > 10) { 
+                    return wrapText(context, text, x, y, maxWidth, newFontSize, fontFace, maxLines);
+                }
+            }
+
+            const lineHeight = initialFontSize * 1.4;
+            for(let k = 0; k < lines.length; k++) {
+                context.fillText(lines[k], x, y + (k * lineHeight));
+            }
+            return lines.length * lineHeight;
+        }
+
+        CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+            if (w < 2 * r) r = w / 2;
+            if (h < 2 * r) r = h / 2;
+            this.beginPath();
+            this.moveTo(x+r, y);
+            this.arcTo(x+w, y,   x+w, y+h, r);
+            this.arcTo(x+w, y+h, x,   y+h, r);
+            this.arcTo(x,   y+h, x,   y,   r);
+            this.arcTo(x,   y,   x+w, y,   r);
+            this.closePath();
+            return this;
+        }
+
+        function drawImageCover(ctx, img, x, y, w, h) {
+            const sW = img.width;
+            const sH = img.height;
+            const targetRatio = w / h;
+            const sourceRatio = sW / sH;
+            let drawW, drawH, startX, startY;
+
+            if (sourceRatio > targetRatio) {
+                drawH = sH;
+                drawW = sH * targetRatio;
+                startX = (sW - drawW) / 2;
+                startY = 0;
+            } else {
+                drawW = sW;
+                drawH = sW / targetRatio;
+                startX = 0;
+                startY = (sH - drawH) / 2;
+            }
+            ctx.drawImage(img, startX, startY, drawW, drawH, x, y, w, h);
+        }
+
+        async function drawPost() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const bgGrad = ctx.createLinearGradient(0, 0, 0, 1080);
+            bgGrad.addColorStop(0, "#f8fafc");
+            bgGrad.addColorStop(1, "#e2e8f0");
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, 1080, 1080);
+
+            const mainImgY = 170; 
+            const mainImgH = 360; 
+            const bannerH = 90;
+            const bannerY = mainImgY + mainImgH - (bannerH / 2); 
+            const isOpenHouse = state.template === 'openhouse';
+
+            ctx.save();
+            ctx.roundRect(40, mainImgY, 1000, mainImgH, 20); 
+            ctx.clip();
+            if (state.images.main) {
+                drawImageCover(ctx, state.images.main, 40, mainImgY, 1000, mainImgH);
+            } else {
+                ctx.fillStyle = "#cbd5e1";
+                ctx.fillRect(40, mainImgY, 1000, mainImgH);
+                ctx.fillStyle = "#64748b";
+                ctx.font = "italic 40px Montserrat";
+                ctx.textAlign = "center";
+                ctx.fillText("Upload Photo", 540, mainImgY + (mainImgH/2));
+            }
+            ctx.restore();
+
+            ctx.shadowColor = "rgba(0,0,0,0.3)";
+            ctx.shadowBlur = 15;
+            const goldGradient = ctx.createLinearGradient(40, bannerY, 1040, bannerY);
+            goldGradient.addColorStop(0, "#ca8a04");
+            goldGradient.addColorStop(0.5, "#facc15");
+            goldGradient.addColorStop(1, "#ca8a04");
+            ctx.fillStyle = goldGradient;
+            ctx.roundRect(540 - 300, bannerY, 600, bannerH, 10);
+            ctx.fill();
+            ctx.shadowBlur = 0; 
+            ctx.fillStyle = "#FFFFFF";
+            ctx.font = "900 60px Montserrat";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(state.statusText.toUpperCase(), 540, bannerY + (bannerH/2) + 5);
+
+            if (isOpenHouse) {
+                if (state.images.partnerLogo) {
+                    const plImg = state.images.partnerLogo;
+                    const maxWidth = 280;
+                    const maxHeight = 100;
+                    const plRatio = Math.min(maxWidth / plImg.width, maxHeight / plImg.height);
+                    ctx.drawImage(plImg, 40, 40, plImg.width * plRatio, plImg.height * plRatio);
+                }
+
+                if (state.images.logo) {
+                    const lImg = state.images.logo;
+                    const maxWidth = 280;
+                    const maxHeight = 100;
+                    const lRatio = Math.min(maxWidth / lImg.width, maxHeight / lImg.height);
+                    ctx.drawImage(lImg, 1040 - (lImg.width * lRatio), 40, lImg.width * lRatio, lImg.height * lRatio);
+                } else {
+                    ctx.textAlign = "right";
+                    ctx.fillStyle = state.primaryColor;
+                    ctx.font = "900 40px Montserrat";
+                    ctx.fillText("GUIDE", 1040, 70);
+                    ctx.fillStyle = state.secondaryColor;
+                    ctx.fillText("MORTGAGE", 1040, 110);
+                }
+            } else {
+                ctx.textAlign = "right";
+                ctx.fillStyle = state.primaryColor;
+                ctx.font = "800 50px Montserrat"; 
+                ctx.fillText(state.agentName.toUpperCase(), 1040, 85);
+                ctx.fillStyle = state.secondaryColor;
+                ctx.font = "500 28px Montserrat";
+                ctx.fillText(state.agentTitle.toUpperCase(), 1040, 125);
+
+                if (state.images.logo) {
+                    const lImg = state.images.logo;
+                    const maxWidth = 280;
+                    const maxHeight = 100;
+                    const lRatio = Math.min(maxWidth / lImg.width, maxHeight / lImg.height);
+                    ctx.drawImage(lImg, 40, 40, lImg.width * lRatio, lImg.height * lRatio);
+                } else {
+                    ctx.textAlign = "left";
+                    ctx.fillStyle = state.primaryColor;
+                    ctx.font = "900 40px Montserrat";
+                    ctx.fillText("GUIDE", 40, 70);
+                    ctx.fillStyle = state.secondaryColor;
+                    ctx.fillText("MORTGAGE", 40, 110);
+                }
+            }
+
+            const contentStart = bannerY + bannerH + 40; 
+            const boxHeight = 300;
+            const box1Width = 480; 
+            
+            ctx.fillStyle = "#FFFFFF";
+            ctx.shadowColor = "rgba(0,0,0,0.05)";
+            ctx.shadowBlur = 10;
+            ctx.roundRect(40, contentStart, box1Width, boxHeight, 15);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            ctx.fillStyle = state.primaryColor;
+            ctx.textAlign = "left";
+            ctx.font = "700 28px Montserrat";
+            
+            let box1Title = "BORROWER SUCCESS";
+            let box1Text = state.borrowerStory;
+
+            if (state.template === 'openhouse') {
+                box1Title = "PROPERTY DETAILS";
+                box1Text = state.propertyDesc;
+            } else if (state.template === 'refinance') {
+                box1Title = "FINANCIAL GOAL";
+                box1Text = state.borrowerStory; 
+            }
+
+            ctx.fillText(box1Title, 70, contentStart + 45);
+            ctx.fillStyle = "#334155";
+            wrapText(ctx, box1Text, 70, contentStart + 85, box1Width - 60, 24, "Roboto", 6);
+
+            ctx.fillStyle = "#FFFFFF";
+            ctx.shadowColor = "rgba(0,0,0,0.05)";
+            ctx.shadowBlur = 10;
+            ctx.roundRect(560, contentStart, 480, boxHeight, 15);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+
+            if (state.template === 'purchase') {
+                ctx.fillStyle = "#f59e0b";
+                ctx.font = "24px FontAwesome";
+                ctx.fillText("\uf005", 590, contentStart + 45);
+                
+                ctx.fillStyle = state.primaryColor;
+                ctx.font = "700 28px Montserrat";
+                ctx.fillText("PARTNER SHOUTOUT", 630, contentStart + 45);
+
+                if (state.partnerEnabled) {
+                    const pX = 600;
+                    const pY = contentStart + 70;
+                    const pSize = 120;
+
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(pX + (pSize/2), pY + (pSize/2), pSize/2, 0, Math.PI * 2);
+                    ctx.clip();
+                    if (state.images.partner) drawImageCover(ctx, state.images.partner, pX, pY, pSize, pSize);
+                    else { ctx.fillStyle = "#e2e8f0"; ctx.fillRect(pX, pY, pSize, pSize); }
+                    ctx.restore();
+                    
+                    const pTextX = pX + pSize + 20;
+                    ctx.fillStyle = "#1e293b";
+                    ctx.font = "700 26px Montserrat";
+                    ctx.fillText(state.partnerName, pTextX, pY + 40);
+                    ctx.fillStyle = "#64748b";
+                    ctx.font = "500 20px Roboto";
+                    ctx.fillText(state.partnerTitle, pTextX, pY + 70);
+                    
+                    ctx.fillStyle = "#334155";
+                    const shoutoutStartY = pY + pSize + 25;
+                    wrapText(ctx, `"${state.partnerShoutout}"`, 590, shoutoutStartY, 420, 22, "italic Roboto", 3);
+                } else {
+                    ctx.fillStyle = "#94a3b8";
+                    ctx.font = "italic 24px Roboto";
+                    ctx.fillText("(Partner display disabled)", 630, contentStart + 150);
+                }
+
+            } else if (state.template === 'refinance') {
+                ctx.fillStyle = "#16a34a"; 
+                ctx.font = "24px FontAwesome";
+                ctx.fillText("\uf3d1", 590, contentStart + 45); 
+                
+                ctx.fillStyle = state.primaryColor;
+                ctx.font = "700 28px Montserrat";
+                ctx.fillText(state.refiTitle.toUpperCase(), 630, contentStart + 45);
+                
+                ctx.fillStyle = "#334155";
+                wrapText(ctx, state.refiDetails, 590, contentStart + 100, 420, 32, "Roboto", 5);
+
+            } else if (state.template === 'openhouse') {
+                ctx.fillStyle = "#ea580c"; 
+                ctx.font = "24px FontAwesome";
+                ctx.fillText("\uf073", 590, contentStart + 45); 
+                
+                ctx.fillStyle = state.primaryColor;
+                ctx.font = "700 28px Montserrat";
+                ctx.fillText("WHEN & WHERE", 630, contentStart + 45);
+                
+                const startY = contentStart + 100;
+                const step = 60;
+                
+                ctx.font = "24px FontAwesome";
+                ctx.fillStyle = state.secondaryColor;
+                ctx.fillText("\uf017", 590, startY);
+                ctx.fillStyle = "#1e293b";
+                ctx.font = "700 28px Montserrat";
+                ctx.fillText(state.ohDate, 630, startY);
+                
+                ctx.fillStyle = "#334155";
+                ctx.font = "500 24px Roboto";
+                ctx.fillText(state.ohTime, 630, startY + 30);
+                
+                ctx.font = "24px FontAwesome";
+                ctx.fillStyle = state.secondaryColor;
+                ctx.fillText("\uf3c5", 590, startY + step + 20);
+                ctx.fillStyle = "#1e293b";
+                ctx.font = "500 26px Roboto";
+                wrapText(ctx, state.ohAddress, 630, startY + step + 20, 380, 26, "Roboto", 2);
+            }
+
+            const footerY = 1080 - 120;
+            ctx.fillStyle = state.primaryColor;
+            ctx.fillRect(0, footerY, 1080, 120);
+
+            if (isOpenHouse) {
+                const headshotSize = 100;
+                const pHeadshotX = 40;
+                const pHeadshotY = footerY + 10;
+                
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(pHeadshotX + (headshotSize/2), pHeadshotY + (headshotSize/2), headshotSize/2, 0, Math.PI * 2);
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = "#FFFFFF";
+                ctx.stroke();
+                ctx.clip();
+                if (state.images.partner) drawImageCover(ctx, state.images.partner, pHeadshotX, pHeadshotY, headshotSize, headshotSize);
+                else { ctx.fillStyle = "#94a3b8"; ctx.fillRect(pHeadshotX, pHeadshotY, headshotSize, headshotSize); }
+                ctx.restore();
+
+                ctx.fillStyle = "#FFFFFF";
+                ctx.textAlign = "left";
+                ctx.font = "700 24px Montserrat";
+                ctx.fillText(state.partnerName, pHeadshotX + 120, footerY + 45);
+                ctx.font = "400 18px Roboto";
+                ctx.fillText(state.partnerTitle, pHeadshotX + 120, footerY + 70);
+                ctx.font = "300 16px Roboto";
+                ctx.fillText(state.partnerContact, pHeadshotX + 120, footerY + 95);
+
+                ctx.beginPath();
+                ctx.moveTo(1080/2, footerY + 10);
+                ctx.lineTo(1080/2, footerY + 110);
+                ctx.strokeStyle = "rgba(255,255,255,0.3)";
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                const aHeadshotX = (1080/2) + 40;
+                
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(aHeadshotX + (headshotSize/2), pHeadshotY + (headshotSize/2), headshotSize/2, 0, Math.PI * 2);
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = "#FFFFFF";
+                ctx.stroke();
+                ctx.clip();
+                if (state.images.agent) drawImageCover(ctx, state.images.agent, aHeadshotX, pHeadshotY, headshotSize, headshotSize);
+                else { ctx.fillStyle = "#94a3b8"; ctx.fillRect(aHeadshotX, pHeadshotY, headshotSize, headshotSize); }
+                ctx.restore();
+
+                ctx.fillStyle = "#FFFFFF";
+                ctx.textAlign = "left";
+                ctx.font = "700 24px Montserrat";
+                ctx.fillText(state.agentName, aHeadshotX + 120, footerY + 45);
+                ctx.font = "400 18px Roboto";
+                ctx.fillText(state.agentTitle, aHeadshotX + 120, footerY + 70);
+                ctx.font = "300 16px Roboto";
+                ctx.fillText(state.agentContact, aHeadshotX + 120, footerY + 95);
+
+            } else {
+                const headshotSize = 200;
+                const headshotX = 60;
+                const headshotY = footerY - 80; 
+                
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(headshotX + (headshotSize/2), headshotY + (headshotSize/2), headshotSize/2, 0, Math.PI * 2);
+                ctx.lineWidth = 8;
+                ctx.strokeStyle = "#FFFFFF";
+                ctx.stroke();
+                ctx.clip();
+                if (state.images.agent) drawImageCover(ctx, state.images.agent, headshotX, headshotY, headshotSize, headshotSize);
+                else { ctx.fillStyle = "#94a3b8"; ctx.fillRect(headshotX, headshotY, headshotSize, headshotSize); }
+                ctx.restore();
+
+                ctx.fillStyle = "#FFFFFF";
+                ctx.textAlign = "left";
+                ctx.font = "500 32px Montserrat";
+                ctx.fillText("Ready for your seamless journey?", 300, footerY + 55);
+                ctx.font = "300 24px Roboto";
+                ctx.fillText(state.agentContact, 300, footerY + 95);
+                ctx.font = "40px FontAwesome";
+                ctx.fillText("\uf095", 980, footerY + 75); 
+            }
+        }
+
+        const templateSelect = document.getElementById('templateSelect');
+        templateSelect.addEventListener('change', (e) => {
+            state.template = e.target.value;
+            updateUIForTemplate();
+            drawPost();
+        });
+
+        function updateUIForTemplate() {
+            const t = state.template;
+            
+            const purchaseInputs = document.getElementById('partnerInputs');
+            const refiInputs = document.getElementById('refiInputs');
+            const ohInputs = document.getElementById('openHouseInputs');
+            const storyGroup = document.getElementById('storyInputGroup');
+            const ohDescGroup = document.getElementById('openHouseDescGroup');
+            const storyLabel = document.getElementById('storyLabel');
+
+            purchaseInputs.classList.add('hidden-group');
+            refiInputs.classList.add('hidden-group');
+            ohInputs.classList.add('hidden-group');
+            storyGroup.classList.add('hidden-group');
+            ohDescGroup.classList.add('hidden-group');
+
+            if (t === 'purchase') {
+                purchaseInputs.classList.remove('hidden-group');
+                storyGroup.classList.remove('hidden-group');
+                storyLabel.innerText = "Borrower Story";
+                if (document.getElementById('statusText').value === "REFINANCED!" || document.getElementById('statusText').value === "OPEN HOUSE") {
+                    document.getElementById('statusText').value = "JUST CLOSED!";
+                    state.statusText = "JUST CLOSED!";
+                }
+            } 
+            else if (t === 'refinance') {
+                refiInputs.classList.remove('hidden-group');
+                storyGroup.classList.remove('hidden-group');
+                storyLabel.innerText = "Financial Goal";
+                if (document.getElementById('statusText').value === "JUST CLOSED!" || document.getElementById('statusText').value === "OPEN HOUSE") {
+                    document.getElementById('statusText').value = "REFINANCED!";
+                    state.statusText = "REFINANCED!";
+                }
+            } 
+            else if (t === 'openhouse') {
+                purchaseInputs.classList.remove('hidden-group');
+                ohInputs.classList.remove('hidden-group');
+                ohDescGroup.classList.remove('hidden-group');
+                if (document.getElementById('statusText').value === "JUST CLOSED!" || document.getElementById('statusText').value === "REFINANCED!") {
+                    document.getElementById('statusText').value = "OPEN HOUSE";
+                    state.statusText = "OPEN HOUSE";
+                }
+            }
+        }
+
+        const STORAGE_KEY = 'mortgage_builder_profile';
+
+        function saveProfile() {
+            const profileData = {
+                primaryColor: state.primaryColor,
+                secondaryColor: state.secondaryColor,
+                agentName: state.agentName,
+                agentTitle: state.agentTitle,
+                agentContact: state.agentContact,
+                agentImage: state.images.agent && state.images.agent.src.startsWith('data:') ? state.images.agent.src : null,
+                logoImage: state.images.logo && state.images.logo.src.startsWith('data:') ? state.images.logo.src : null
+            };
+            safeStorage.setItem(STORAGE_KEY, JSON.stringify(profileData));
+            showToast("Profile Settings Saved");
+        }
+
+        async function loadProfile() {
+            const saved = safeStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    if(data.agentName) { document.getElementById('agentName').value = data.agentName; state.agentName = data.agentName; }
+                    if(data.agentTitle) { document.getElementById('agentTitle').value = data.agentTitle; state.agentTitle = data.agentTitle; }
+                    if(data.agentContact) { document.getElementById('agentContact').value = data.agentContact; state.agentContact = data.agentContact; }
+                    if(data.primaryColor) { document.getElementById('primaryColor').value = data.primaryColor; state.primaryColor = data.primaryColor; }
+                    if(data.secondaryColor) { document.getElementById('secondaryColor').value = data.secondaryColor; state.secondaryColor = data.secondaryColor; }
+                    if (data.agentImage) { 
+                        try { state.images.agent = await loadImage(data.agentImage); document.getElementById('agentPhotoSaved').classList.remove('hidden'); } catch(e) {} 
+                    }
+                    if (data.logoImage) { 
+                        try { state.images.logo = await loadImage(data.logoImage); document.getElementById('logoSaved').classList.remove('hidden'); } catch(e) {} 
+                    }
+                } catch(err) { console.error("Error loading profile", err); }
+            }
+        }
+
+        document.getElementById('clearProfileBtn').addEventListener('click', () => {
+            if(confirm("Clear saved settings?")) { safeStorage.removeItem(STORAGE_KEY); location.reload(); }
+        });
+
+        async function init() {
+            try {
+                if (SAVED_AGENT_PHOTO_SRC) {
+                    state.images.agent = await loadImage(SAVED_AGENT_PHOTO_SRC);
+                    document.getElementById('agentPhotoSaved').classList.remove('hidden'); 
+                }
+                if (SAVED_LOGO_SRC) {
+                    state.images.logo = await loadImage(SAVED_LOGO_SRC);
+                    document.getElementById('logoSaved').classList.remove('hidden'); 
+                }
+                
+                // Attempt to load profile
+                await loadProfile();
+                
+                // Load Defaults if missing
+                if (!state.images.agent) state.images.agent = await loadImage(defaultAgentPhoto);
+                if (!state.images.partner) state.images.partner = await loadImage(defaultPartnerPhoto); 
+                
+                drawPost();
+                
+                // Success: Hide overlay immediately
+                const overlay = document.getElementById('loading-overlay');
+                if(overlay) overlay.classList.add('hidden');
+                
+            } catch (e) {
+                console.error("Init failed:", e);
+                // Even if init failed, try to hide overlay so user can see something
+                document.getElementById('loading-overlay').classList.add('hidden');
+            }
+        }
+
+        // --- SAFETY VALVE ---
+        // Force hide loader after 3 seconds no matter what
+        setTimeout(() => {
+            const loader = document.getElementById('loading-overlay');
+            if (loader && !loader.classList.contains('hidden')) {
+                console.warn("Forcing loader hide via safety timer");
+                loader.classList.add('hidden');
+            }
+        }, 3000);
+
+        const textInputs = ['agentName', 'agentTitle', 'agentContact', 'statusText', 'borrowerStory', 'partnerName', 'partnerTitle', 'partnerContact', 'partnerShoutout', 'refiTitle', 'refiDetails', 'propertyDesc', 'ohDate', 'ohTime', 'ohAddress'];
+        textInputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', (e) => {
+                state[id] = e.target.value;
+                drawPost();
+            });
+            if(['agentName', 'agentTitle', 'agentContact'].includes(id)) {
+                document.getElementById(id).addEventListener('blur', saveProfile);
+            }
+        });
+
+        ['primaryColor', 'secondaryColor'].forEach(id => {
+            document.getElementById(id).addEventListener('input', (e) => {
+                state[id] = e.target.value;
+                drawPost();
+                saveProfile(); 
+            });
+        });
+
+        document.getElementById('partnerToggle').addEventListener('change', (e) => {
+            state.partnerEnabled = e.target.checked;
+            const controls = document.getElementById('partnerControls');
+            state.partnerEnabled ? controls.classList.remove('opacity-50', 'pointer-events-none') : controls.classList.add('opacity-50', 'pointer-events-none');
+            drawPost();
+        });
+
+        function handleImageUpload(inputId, stateKey, saveToProfile = false) {
+            document.getElementById(inputId).addEventListener('change', async (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = async (event) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            state.images[stateKey] = img;
+                            drawPost();
+                            if (saveToProfile) {
+                                if (inputId === 'agentPhotoInput') document.getElementById('agentPhotoSaved').classList.remove('hidden');
+                                if (inputId === 'logoInput') document.getElementById('logoSaved').classList.remove('hidden');
+                                saveProfile();
+                            }
+                        };
+                        img.src = event.target.result;
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+        }
+
+        handleImageUpload('agentPhotoInput', 'agent', true);
+        handleImageUpload('logoInput', 'logo', true);
+        handleImageUpload('mainPhotoInput', 'main', false);
+        handleImageUpload('partnerPhotoInput', 'partner', false);
+        handleImageUpload('partnerLogoInput', 'partnerLogo', false);
+
+        // --- NEW DOWNLOAD LOGIC (Mobile Friendly) ---
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            const dataUrl = canvas.toDataURL();
+            
+            // Detect if mobile (simple check)
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+            if (isMobile) {
+                // Show modal for long-press saving
+                finalImage.src = dataUrl;
+                saveModal.classList.add('active');
+            } else {
+                // Desktop - do standard download
+                const link = document.createElement('a');
+                link.download = `Mortgage-Post-${state.template}-${Date.now()}.png`;
+                link.href = dataUrl;
+                link.click();
+                showToast("Image Downloaded!");
+            }
+        });
+
+        // Close Modal
+        closeModalBtn.addEventListener('click', () => {
+            saveModal.classList.remove('active');
+        });
+
+        // Close modal on click outside image
+        saveModal.addEventListener('click', (e) => {
+            if(e.target === saveModal) saveModal.classList.remove('active');
+        });
+
+        document.getElementById('saveToolBtn').addEventListener('click', () => {
+            showToast("Preparing Config File...");
+            let htmlContent = document.documentElement.outerHTML;
+            const scriptTagMatch = htmlContent.match(/<script>(.*?)<\/script>/s);
+            if (!scriptTagMatch || !scriptTagMatch[1]) {
+                showToast("Error: Could not save tool.");
+                return;
+            }
+            let scriptContent = scriptTagMatch[1];
+            const currentAgentSrc = state.images.agent && state.images.agent.src.startsWith('data:') ? state.images.agent.src : '';
+            const currentLogoSrc = state.images.logo && state.images.logo.src.startsWith('data:') ? state.images.logo.src : '';
+            const agentPhotoRegex = /(const SAVED_AGENT_PHOTO_SRC = ')(.*?)(';)/s;
+            const logoRegex = /(const SAVED_LOGO_SRC = ')(.*?)(';)/s;
+            scriptContent = scriptContent.replace(agentPhotoRegex, `$1${currentAgentSrc}$3`);
+            scriptContent = scriptContent.replace(logoRegex, `$1${currentLogoSrc}$3`);
+            const scriptTagFull = scriptTagMatch[0].replace(scriptTagMatch[1], scriptContent);
+            htmlContent = htmlContent.replace(scriptTagMatch[0], scriptTagFull);
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const link = document.createElement('a');
+            link.download = 'Ben_Harman_Marketing_Hub_Custom.html';
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            showToast("Tool Saved! Use the new file for future posts.");
+        });
+
+        // Start Init (with small delay to let DOM settle)
+        setTimeout(init, 100);
+    })(); 
+</script>
+</body>
+</html>
