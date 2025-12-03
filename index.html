@@ -115,7 +115,7 @@
         <div class="p-5 border-b border-gray-100 bg-slate-50 flex justify-between items-center sticky top-0 z-20 md:static">
             <div>
                 <h1 class="text-xl font-bold text-slate-800"><i class="fas fa-layer-group mr-2 text-blue-900"></i>Team Marketing Hub</h1>
-                <p class="text-xs text-gray-500 mt-1">Mobile V4.1 - Final Build</p>
+                <p class="text-xs text-gray-500 mt-1">Mobile V4.4 - Footer Fix</p>
             </div>
             <button onclick="document.getElementById('preview-section').scrollIntoView({behavior: 'smooth'})" class="md:hidden text-blue-900 text-sm font-bold border border-blue-200 p-2 rounded bg-white">
                 <i class="fas fa-eye"></i> View
@@ -185,7 +185,14 @@
                 <input type="text" id="agentTitle" value="Mortgage Loan Originator" class="w-full p-2 border rounded text-sm bg-gray-50 text-gray-700 border-gray-200 focus:bg-white focus:border-blue-500 outline-none transition-colors" placeholder="Your Title">
                 <input type="text" id="agentContact" value="(419)-266-6229 | NMLS# 2599175" class="w-full p-2 border rounded text-sm bg-gray-50 text-gray-700 border-gray-200 focus:bg-white focus:border-blue-500 outline-none transition-colors" placeholder="Contact Info">
                 
-                <div class="bg-yellow-50 p-2 rounded border border-yellow-200">
+                <!-- NEW SOCIAL HANDLES -->
+                <div class="grid grid-cols-3 gap-2 mt-2">
+                    <input type="text" id="socialInsta" class="w-full p-1.5 border rounded text-xs text-gray-700 border-gray-200 outline-none" placeholder="@Instagram">
+                    <input type="text" id="socialFb" class="w-full p-1.5 border rounded text-xs text-gray-700 border-gray-200 outline-none" placeholder="/Facebook">
+                    <input type="text" id="socialLi" class="w-full p-1.5 border rounded text-xs text-gray-700 border-gray-200 outline-none" placeholder="/LinkedIn">
+                </div>
+
+                <div class="bg-yellow-50 p-2 rounded border border-yellow-200 mt-2">
                     <label class="block text-[10px] font-bold text-yellow-800 mb-1 uppercase">Compliance Info</label>
                     <input type="text" id="companyNmls" value="Company NMLS# 2327585" class="w-full p-1.5 border rounded text-xs text-gray-700 border-gray-200 focus:border-blue-500 outline-none" placeholder="Company NMLS ID">
                 </div>
@@ -349,12 +356,27 @@
                  </div>
             </div>
 
+            <!-- SECTION: SOCIAL SHARE -->
+            <div class="bg-purple-50 p-3 rounded-lg border border-purple-100 space-y-3">
+                <h3 class="text-xs font-bold text-purple-900 uppercase tracking-wider"><i class="fas fa-share-alt mr-1"></i> Social Post</h3>
+                <textarea id="socialCaption" rows="3" class="w-full p-2 border rounded text-sm border-purple-200 focus:border-purple-500 outline-none" placeholder="Draft your social media caption here..."></textarea>
+                <button id="copyCaptionBtn" class="w-full text-xs text-purple-700 font-semibold py-1.5 rounded hover:bg-purple-100 border border-purple-200 transition-colors">
+                    <i class="fas fa-copy mr-1"></i> Copy Caption to Clipboard
+                </button>
+            </div>
+
         </div>
         
         <div class="p-4 border-t border-gray-200 bg-white space-y-3 sticky bottom-0 z-20 md:static">
-            <button id="downloadBtn" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
-                <i class="fas fa-download"></i> Download Image
-            </button>
+            <!-- Share Button Group -->
+            <div class="flex gap-2">
+                <button id="shareBtn" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-2 rounded-lg shadow transition-colors flex items-center justify-center gap-1 text-sm">
+                    <i class="fas fa-share-from-square"></i> Share to Apps
+                </button>
+                <button id="downloadBtn" class="flex-1 bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-2 rounded-lg shadow transition-colors flex items-center justify-center gap-1 text-sm">
+                    <i class="fas fa-download"></i> Download Image
+                </button>
+            </div>
             
             <button id="saveToolBtn" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2 px-4 rounded-lg border border-slate-300 transition-colors flex items-center justify-center gap-2">
                 <i class="fas fa-save"></i> Save & Download Tool
@@ -438,6 +460,9 @@
             agentTitle: document.getElementById('agentTitle').value,
             agentContact: document.getElementById('agentContact').value,
             companyNmls: document.getElementById('companyNmls').value,
+            socialInsta: document.getElementById('socialInsta').value,
+            socialFb: document.getElementById('socialFb').value,
+            socialLi: document.getElementById('socialLi').value,
             statusText: document.getElementById('statusText').value,
             borrowerStory: document.getElementById('borrowerStory').value,
             partnerEnabled: true,
@@ -461,6 +486,7 @@
             sc1Label: 'Conventional', sc1Down: 20, sc1Rate: 6.5,
             sc2Label: 'FHA', sc2Down: 3.5, sc2Rate: 5.99,
             calcDisclaimer: document.getElementById('calcDisclaimer').value,
+            socialCaption: '', // for posting
             
             images: { agent: null, main: null, partner: null, partnerLogo: null, logo: null }
         };
@@ -921,6 +947,29 @@
                 ctx.font = "300 12px Roboto";
                 ctx.fillText(compText, (W/2) + 40 + 140, compY);
 
+                // --- SOCIAL HANDLES (Flyer Only) ---
+                if (isFlyer && (state.socialInsta || state.socialFb || state.socialLi)) {
+                    ctx.textAlign = "right"; ctx.fillStyle = "#FFFFFF"; ctx.font = "14px Roboto";
+                    const sY = footerY + 110;
+                    let sX = W - 40;
+                    
+                    if(state.socialFb) {
+                        ctx.fillText(state.socialFb, sX, sY); sX -= (ctx.measureText(state.socialFb).width + 10);
+                        ctx.font = "16px FontAwesome"; ctx.fillText("\uf09a", sX, sY); sX -= 30; // FB Icon
+                        ctx.font = "14px Roboto";
+                    }
+                    if(state.socialInsta) {
+                        ctx.fillText(state.socialInsta, sX, sY); sX -= (ctx.measureText(state.socialInsta).width + 10);
+                        ctx.font = "16px FontAwesome"; ctx.fillText("\uf16d", sX, sY); sX -= 30; // IG Icon
+                        ctx.font = "14px Roboto";
+                    }
+                    if(state.socialLi) {
+                        ctx.fillText(state.socialLi, sX, sY); sX -= (ctx.measureText(state.socialLi).width + 10);
+                        ctx.font = "16px FontAwesome"; ctx.fillText("\uf08c", sX, sY); // LI Icon
+                        ctx.font = "14px Roboto";
+                    }
+                }
+
             } else {
                 // Standard Solo Agent Footer
                 const headshotSize = 200; const headshotX = 60; const headshotY = footerY - 80; 
@@ -931,9 +980,9 @@
                 ctx.restore();
 
                 ctx.fillStyle = "#FFFFFF"; ctx.textAlign = "left";
-                ctx.font = "500 32px Montserrat"; ctx.fillText("Ready for your seamless journey?", 300, footerY + 50);
-                ctx.font = "300 24px Roboto"; ctx.fillText(state.agentContact, 300, footerY + 85);
-                const iconX = 300; const iconY = footerY + 108;
+                ctx.font = "500 32px Montserrat"; ctx.fillText("Ready for your seamless journey?", 300, footerY + 44);
+                ctx.font = "300 24px Roboto"; ctx.fillText(state.agentContact, 300, footerY + 74);
+                const iconX = 300; const iconY = footerY + 98;
                 ctx.font = "18px FontAwesome"; ctx.fillStyle = "#FFFFFF"; ctx.fillText("\uf015", iconX, iconY);
                 ctx.font = "300 15px Roboto"; ctx.fillStyle = "rgba(255,255,255,0.9)"; ctx.fillText(`Equal Housing Lender  |  ${state.companyNmls}`, iconX + 30, iconY);
                 ctx.fillStyle = "#FFFFFF"; ctx.textAlign = "right"; ctx.font = "40px FontAwesome"; ctx.fillText("\uf095", 1020, footerY + 75); 
@@ -956,6 +1005,21 @@
                 state[id] = (id.includes('Label') || id === 'calcDisclaimer') ? val : parseFloat(val) || 0;
                 drawPost();
             });
+        });
+
+        const textInputs = ['agentName', 'agentTitle', 'agentContact', 'companyNmls', 'socialInsta', 'socialFb', 'socialLi', 'statusText', 'borrowerStory', 'partnerName', 'partnerTitle', 'partnerContact', 'partnerShoutout', 'refiTitle', 'refiDetails', 'propertyDesc', 'ohDate', 'ohTime', 'ohAddress'];
+        textInputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', (e) => {
+                state[id] = e.target.value;
+                drawPost();
+            });
+            if(['agentName', 'agentTitle', 'agentContact', 'companyNmls', 'socialInsta', 'socialFb', 'socialLi'].includes(id)) {
+                document.getElementById(id).addEventListener('blur', saveProfile);
+            }
+        });
+
+        document.getElementById('socialCaption').addEventListener('input', (e) => {
+            state.socialCaption = e.target.value;
         });
 
         function updateUIForTemplate() {
@@ -1003,6 +1067,39 @@
                 if (['JUST CLOSED!', 'REFINANCED!'].includes(state.statusText)) { state.statusText = "OPEN HOUSE"; document.getElementById('statusText').value = "OPEN HOUSE"; }
             }
         }
+
+        // --- SOCIAL SHARE LOGIC (NEW) ---
+        document.getElementById('shareBtn').addEventListener('click', async () => {
+            if (!navigator.share) {
+                alert("Native sharing is not supported on this device/browser. Please use 'Download Image'.");
+                return;
+            }
+
+            canvas.toBlob(async (blob) => {
+                const file = new File([blob], `post-${Date.now()}.png`, { type: "image/png" });
+                const shareData = {
+                    files: [file],
+                    title: 'New Post',
+                    text: state.socialCaption
+                };
+
+                try {
+                    await navigator.share(shareData);
+                    showToast("Shared successfully!");
+                } catch (err) {
+                    console.log("Share failed or canceled", err);
+                }
+            });
+        });
+
+        document.getElementById('copyCaptionBtn').addEventListener('click', () => {
+            navigator.clipboard.writeText(state.socialCaption).then(() => {
+                showToast("Caption Copied!");
+            }, () => {
+                showToast("Failed to copy caption.");
+            });
+        });
+
 
         // --- PARTNER HUB LOGIC ---
         const PARTNERS_KEY = 'mortgage_builder_partners';
@@ -1174,6 +1271,9 @@
                 title: document.getElementById('agentTitle').value,
                 contact: document.getElementById('agentContact').value,
                 companyNmls: document.getElementById('companyNmls').value,
+                socialInsta: document.getElementById('socialInsta').value,
+                socialFb: document.getElementById('socialFb').value,
+                socialLi: document.getElementById('socialLi').value,
                 primaryColor: state.primaryColor,
                 secondaryColor: state.secondaryColor,
                 photo: photoData,
@@ -1228,6 +1328,9 @@
             document.getElementById('agentTitle').value = a.title || '';
             document.getElementById('agentContact').value = a.contact || '';
             document.getElementById('companyNmls').value = a.companyNmls || '';
+            document.getElementById('socialInsta').value = a.socialInsta || '';
+            document.getElementById('socialFb').value = a.socialFb || '';
+            document.getElementById('socialLi').value = a.socialLi || '';
             document.getElementById('primaryColor').value = a.primaryColor || '#0d3b66';
             document.getElementById('secondaryColor').value = a.secondaryColor || '#8d99ae';
 
@@ -1235,6 +1338,9 @@
             state.agentTitle = a.title || '';
             state.agentContact = a.contact || '';
             state.companyNmls = a.companyNmls || '';
+            state.socialInsta = a.socialInsta || '';
+            state.socialFb = a.socialFb || '';
+            state.socialLi = a.socialLi || '';
             state.primaryColor = a.primaryColor || '#0d3b66';
             state.secondaryColor = a.secondaryColor || '#8d99ae';
 
@@ -1279,6 +1385,9 @@
                 agentTitle: state.agentTitle,
                 agentContact: state.agentContact,
                 companyNmls: state.companyNmls,
+                socialInsta: state.socialInsta,
+                socialFb: state.socialFb,
+                socialLi: state.socialLi,
                 agentImage: state.images.agent && state.images.agent.src.startsWith('data:') ? state.images.agent.src : null,
                 logoImage: state.images.logo && state.images.logo.src.startsWith('data:') ? state.images.logo.src : null
             };
@@ -1294,6 +1403,9 @@
                     if(data.agentTitle) { document.getElementById('agentTitle').value = data.agentTitle; state.agentTitle = data.agentTitle; }
                     if(data.agentContact) { document.getElementById('agentContact').value = data.agentContact; state.agentContact = data.agentContact; }
                     if(data.companyNmls) { document.getElementById('companyNmls').value = data.companyNmls; state.companyNmls = data.companyNmls; }
+                    if(data.socialInsta) { document.getElementById('socialInsta').value = data.socialInsta; state.socialInsta = data.socialInsta; }
+                    if(data.socialFb) { document.getElementById('socialFb').value = data.socialFb; state.socialFb = data.socialFb; }
+                    if(data.socialLi) { document.getElementById('socialLi').value = data.socialLi; state.socialLi = data.socialLi; }
                     if(data.primaryColor) { document.getElementById('primaryColor').value = data.primaryColor; state.primaryColor = data.primaryColor; }
                     if(data.secondaryColor) { document.getElementById('secondaryColor').value = data.secondaryColor; state.secondaryColor = data.secondaryColor; }
                     if (data.agentImage) { 
@@ -1349,17 +1461,6 @@
                 loader.classList.add('hidden');
             }
         }, 3000);
-
-        const textInputs = ['agentName', 'agentTitle', 'agentContact', 'companyNmls', 'statusText', 'borrowerStory', 'partnerName', 'partnerTitle', 'partnerContact', 'partnerShoutout', 'refiTitle', 'refiDetails', 'propertyDesc', 'ohDate', 'ohTime', 'ohAddress'];
-        textInputs.forEach(id => {
-            document.getElementById(id).addEventListener('input', (e) => {
-                state[id] = e.target.value;
-                drawPost();
-            });
-            if(['agentName', 'agentTitle', 'agentContact', 'companyNmls'].includes(id)) {
-                document.getElementById(id).addEventListener('blur', saveProfile);
-            }
-        });
 
         ['primaryColor', 'secondaryColor'].forEach(id => {
             document.getElementById(id).addEventListener('input', (e) => {
