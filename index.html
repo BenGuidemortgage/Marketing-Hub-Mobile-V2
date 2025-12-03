@@ -115,7 +115,7 @@
         <div class="p-5 border-b border-gray-100 bg-slate-50 flex justify-between items-center sticky top-0 z-20 md:static">
             <div>
                 <h1 class="text-xl font-bold text-slate-800"><i class="fas fa-layer-group mr-2 text-blue-900"></i>Team Marketing Hub</h1>
-                <p class="text-xs text-gray-500 mt-1">Mobile V4.6 - Insta Fix</p>
+                <p class="text-xs text-gray-500 mt-1">Mobile V4.7 - Insta Share Fix</p>
             </div>
             <button onclick="document.getElementById('preview-section').scrollIntoView({behavior: 'smooth'})" class="md:hidden text-blue-900 text-sm font-bold border border-blue-200 p-2 rounded bg-white">
                 <i class="fas fa-eye"></i> View
@@ -1075,11 +1075,17 @@
                 return;
             }
 
+            // --- INSTAGRAM FIX: USE JPEG AND REMOVE TITLE ---
+            // Instagram share intents often fail if multiple items (title + file) are present
+            // or if the file format is PNG in certain versions.
+            // We force JPEG at 0.95 quality and ONLY send the files array.
+            
             canvas.toBlob(async (blob) => {
-                const file = new File([blob], `post-${Date.now()}.png`, { type: "image/png" });
+                const file = new File([blob], `post-${Date.now()}.jpg`, { type: "image/jpeg" });
+                
                 const shareData = {
-                    files: [file],
-                    title: 'New Post' // Removed text property to fix Instagram share issue
+                    files: [file]
+                    // title: 'New Post' <-- REMOVED intentionally to fix Instagram error
                 };
 
                 try {
@@ -1088,7 +1094,7 @@
                 } catch (err) {
                     console.log("Share failed or canceled", err);
                 }
-            });
+            }, 'image/jpeg', 0.95); // Force JPEG format
         });
 
         document.getElementById('copyCaptionBtn').addEventListener('click', () => {
