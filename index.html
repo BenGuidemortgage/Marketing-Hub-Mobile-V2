@@ -161,14 +161,15 @@
                     </ol>
                 </div>
 
-                <!-- Section 3: Profile & Teams -->
+                <!-- Section 3: Magic Rewrite -->
                 <div class="help-section">
-                    <h4 class="font-bold text-indigo-900 mb-2 text-base">💾 Saving Profiles</h4>
-                    <ul class="list-disc pl-5 space-y-1">
-                        <li><strong>My Profile:</strong> Your name, photo, and license info auto-save to your browser as you type.</li>
-                        <li><strong>Team Hub:</strong> If you work with a team, fill out their info and click <strong>"Save Current Profile to Hub"</strong>. You can then instantly swap between team members using the dropdown menu.</li>
-                        <li><strong>Partner Hub:</strong> Works the same way! Save your favorite Realtors so you don't have to re-upload their logos every time.</li>
-                    </ul>
+                    <h4 class="font-bold text-pink-600 mb-2 text-base">✨ Magic Rewrite</h4>
+                    <p class="mb-2">Stuck on what to write? Use the Magic Rewrite feature!</p>
+                    <ol class="list-decimal pl-5 space-y-1">
+                        <li>In the "Borrower Story" box, type simple bullet points (e.g., "saved 200, fast closing, happy").</li>
+                        <li>Tap the purple <strong>"✨ Magic Rewrite"</strong> button.</li>
+                        <li>The tool will automatically convert your bullets into a professional, confident sentence!</li>
+                    </ol>
                 </div>
 
                 <!-- Section 4: Troubleshooting -->
@@ -212,7 +213,7 @@
         <div class="p-5 border-b border-gray-100 bg-slate-50 flex justify-between items-center sticky top-0 z-20 md:static">
             <div>
                 <h1 class="text-xl font-bold text-slate-800"><i class="fas fa-layer-group mr-2 text-blue-900"></i>Team Marketing Hub</h1>
-                <p class="text-xs text-gray-500 mt-1">Mobile V5.0 - Editable Headers</p>
+                <p class="text-xs text-gray-500 mt-1">Mobile V5.1 - Refi Reviews & AI</p>
             </div>
             <div class="flex gap-2">
                 <button id="helpBtn" class="text-blue-900 text-sm font-bold border border-blue-200 p-2 rounded bg-white" title="Help Center">
@@ -232,7 +233,7 @@
                 <div class="relative">
                     <select id="templateSelect" class="w-full p-2 pl-9 border border-blue-200 rounded text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-900 focus:border-blue-900 appearance-none bg-white outline-none">
                         <option value="purchase">Purchase Closing (Social)</option>
-                        <option value="refinance">Refinance Success (Social)</option>
+                        <option value="refinance">Refinance (Review/Stats)</option>
                         <option value="openhouse">Open House (Social)</option>
                         <option value="flyer">Open House Flyer (Print 8.5x11)</option>
                     </select>
@@ -306,7 +307,7 @@
             <div class="space-y-3">
                 <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Post Content</h3>
                 
-                <div>
+                <div id="mainPhotoGroup">
                     <label class="block text-xs font-medium text-gray-700 mb-1" id="mainPhotoLabel">Main Photo (Clients/House)</label>
                     <input type="file" id="mainPhotoInput" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                 </div>
@@ -318,8 +319,13 @@
 
                 <div id="storyInputGroup" class="input-group">
                     <label class="block text-xs font-medium text-gray-700 mb-1" id="storyLabel">Borrower Story</label>
-                    <input type="text" id="storyTitle" value="BORROWER SUCCESS" class="w-full mb-2 p-2 border rounded text-sm font-bold border-gray-300 focus:border-blue-500 outline-none" placeholder="Section Title">
-                    <textarea id="borrowerStory" rows="4" class="w-full p-2 border rounded text-sm border-gray-300 focus:border-blue-500 outline-none" placeholder="Tell the story...">Another smooth closing! We successfully navigated a complex self-employed application and got the Smith family into their dream home in just 28 days.</textarea>
+                    <div class="flex justify-between items-center mb-1">
+                        <input type="text" id="storyTitle" value="BORROWER SUCCESS" class="flex-1 mr-2 p-1.5 border rounded text-xs font-bold border-gray-300 focus:border-blue-500 outline-none" placeholder="Section Title">
+                        <button id="magicRewriteBtn" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold px-2 py-1 rounded hover:opacity-90 transition-opacity flex items-center gap-1 shadow-sm">
+                            <i class="fas fa-wand-magic-sparkles"></i> Magic Rewrite
+                        </button>
+                    </div>
+                    <textarea id="borrowerStory" rows="4" class="w-full p-2 border rounded text-sm border-gray-300 focus:border-blue-500 outline-none" placeholder="Tell the story (or paste bullets for AI)...">Another smooth closing! We successfully navigated a complex self-employed application and got the Smith family into their dream home in just 28 days.</textarea>
                 </div>
 
                 <div id="openHouseDescGroup" class="input-group hidden-group">
@@ -769,6 +775,7 @@
             const W = targetW;
             const H = targetH;
             const isOpenHouse = state.template === 'openhouse';
+            const isRefi = state.template === 'refinance';
 
             // --- HEADER ---
             let bannerY = 0;
@@ -776,7 +783,7 @@
             let mainImgH = 0;
 
             if (isFlyer) {
-                // FLYER HEADER (Logos top L/R, Title Center)
+                // ... (Flyer code remains same) ...
                 const headerH = 180;
                 
                 // Partner Logo
@@ -815,11 +822,10 @@
                 else { ctx.fillStyle = "#cbd5e1"; ctx.fillRect(60, mainImgY, W - 120, mainImgH); }
                 ctx.restore();
 
-                // Property Details (Address & Desc)
+                // Property Details
                 ctx.textAlign = "left";
                 const contentY = mainImgY + mainImgH + 50;
                 
-                // Icon + Address
                 ctx.font = "30px FontAwesome";
                 ctx.fillStyle = "#ea580c";
                 ctx.fillText("\uf3c5", 60, contentY);
@@ -828,7 +834,6 @@
                 ctx.fillStyle = "#1e293b";
                 ctx.fillText(state.ohAddress, 110, contentY);
                 
-                // Time
                 ctx.font = "30px FontAwesome";
                 ctx.fillStyle = "#ea580c";
                 ctx.fillText("\uf017", 60, contentY + 50);
@@ -838,22 +843,19 @@
                 const timeStr = `${state.ohDate}  |  ${state.ohTime}`;
                 ctx.fillText(timeStr, 110, contentY + 50);
 
-                // Description Paragraph
                 ctx.font = "26px Roboto";
                 ctx.fillStyle = "#475569";
                 wrapText(ctx, state.propertyDesc, 60, contentY + 110, W - 120, 26, "Roboto", 4);
 
-                // --- FINANCING TABLE (CALCULATOR) ---
+                // --- FINANCING TABLE ---
                 const calcY = contentY + 280;
                 const calcBoxH = 420;
                 
-                // Background Box
                 ctx.fillStyle = "#FFFFFF";
                 ctx.shadowColor = "rgba(0,0,0,0.05)"; ctx.shadowBlur = 10;
                 ctx.roundRect(60, calcY, W - 120, calcBoxH, 15);
                 ctx.fill(); ctx.shadowBlur = 0;
                 
-                // Header Bar
                 ctx.fillStyle = state.primaryColor;
                 ctx.roundRect(60, calcY, W - 120, 60, {tl:15, tr:15, bl:0, br:0});
                 ctx.fill();
@@ -863,11 +865,9 @@
                 ctx.textAlign = "center";
                 ctx.fillText(`FINANCING OPTIONS  |  LIST PRICE: ${formatCurrency(state.calcPrice)}`, W/2, calcY + 40);
 
-                // CALCULATIONS
                 const res1 = calculateMortgage(state.calcPrice, state.sc1Down, state.sc1Rate, state.calcTax, state.calcIns, state.calcHoa);
                 const res2 = calculateMortgage(state.calcPrice, state.sc2Down, state.sc2Rate, state.calcTax, state.calcIns, state.calcHoa);
 
-                // TABLE DRAWING - ADJUSTED SPACING
                 const col1X = 90;
                 const col2X = 720;
                 const col3X = 1020;
@@ -885,10 +885,10 @@
                 ctx.fillStyle = state.primaryColor;
                 ctx.fillText("EST. PAYMENT", col1X, rowStart + rowH*4 + 10);
 
-                // COL 2 (SCENARIO 1)
+                // COL 2
                 ctx.textAlign = "center";
                 ctx.fillStyle = state.primaryColor; ctx.font = "800 26px Montserrat";
-                ctx.fillText(state.sc1Label, col2X, rowStart - 35); // Header
+                ctx.fillText(state.sc1Label, col2X, rowStart - 35); 
 
                 ctx.fillStyle = "#334155"; ctx.font = "500 24px Roboto";
                 ctx.fillText(`${state.sc1Down}% (${formatCurrency(res1.downAmt)})`, col2X, rowStart);
@@ -896,12 +896,12 @@
                 ctx.fillText(formatCurrency(res1.pi), col2X, rowStart + rowH*2);
                 ctx.fillText(formatCurrency(res1.taxes + res1.ins + res1.hoa), col2X, rowStart + rowH*3);
                 
-                ctx.font = "900 32px Montserrat"; ctx.fillStyle = "#15803d"; // Green
+                ctx.font = "900 32px Montserrat"; ctx.fillStyle = "#15803d"; 
                 ctx.fillText(formatCurrency(res1.total), col2X, rowStart + rowH*4 + 10);
 
-                // COL 3 (SCENARIO 2)
+                // COL 3
                 ctx.fillStyle = state.primaryColor; ctx.font = "800 26px Montserrat";
-                ctx.fillText(state.sc2Label, col3X, rowStart - 35); // Header
+                ctx.fillText(state.sc2Label, col3X, rowStart - 35); 
 
                 ctx.fillStyle = "#334155"; ctx.font = "500 24px Roboto";
                 ctx.fillText(`${state.sc2Down}% (${formatCurrency(res2.downAmt)})`, col3X, rowStart);
@@ -912,7 +912,6 @@
                 ctx.font = "900 32px Montserrat"; ctx.fillStyle = "#15803d"; 
                 ctx.fillText(formatCurrency(res2.total), col3X, rowStart + rowH*4 + 10);
 
-                // Disclaimer
                 ctx.font = "italic 16px Roboto";
                 ctx.fillStyle = "#94a3b8";
                 ctx.textAlign = "center";
@@ -925,12 +924,57 @@
                 const bannerH = 90;
                 bannerY = mainImgY + mainImgH - (bannerH / 2); 
 
-                ctx.save();
-                ctx.roundRect(40, mainImgY, 1000, mainImgH, 20); 
-                ctx.clip();
-                if (state.images.main) drawImageCover(ctx, state.images.main, 40, mainImgY, 1000, mainImgH);
-                else { ctx.fillStyle = "#cbd5e1"; ctx.fillRect(40, mainImgY, 1000, mainImgH); ctx.fillStyle = "#64748b"; ctx.textAlign = "center"; ctx.fillText("Upload Photo", 540, mainImgY + (mainImgH/2)); }
-                ctx.restore();
+                if (isRefi) {
+                    // --- NEW REFINANCE REVIEW LAYOUT ---
+                    // Draw Review Card Background instead of Image
+                    ctx.save();
+                    ctx.roundRect(40, mainImgY, 1000, mainImgH, 20);
+                    ctx.clip();
+                    
+                    // Subtle background gradient
+                    const rGrad = ctx.createLinearGradient(40, mainImgY, 40, mainImgY+mainImgH);
+                    rGrad.addColorStop(0, "#f1f5f9");
+                    rGrad.addColorStop(1, "#e2e8f0");
+                    ctx.fillStyle = rGrad;
+                    ctx.fillRect(40, mainImgY, 1000, mainImgH);
+                    
+                    // Draw 5 Stars
+                    ctx.font = "60px FontAwesome";
+                    ctx.fillStyle = "#eab308"; // Gold
+                    const starW = ctx.measureText("\uf005").width;
+                    const starsW = (starW * 5) + 40; // spacing
+                    let starX = 540 - (starsW/2);
+                    for(let i=0; i<5; i++) {
+                        ctx.fillText("\uf005", starX, mainImgY + 100);
+                        starX += (starW + 10);
+                    }
+
+                    // Draw Review Text (Large)
+                    ctx.font = "italic 700 40px Montserrat";
+                    ctx.fillStyle = "#334155";
+                    ctx.textAlign = "center";
+                    let displayText = state.borrowerStory;
+                    if(displayText.length < 5) displayText = "Five Star Service! We saved hundreds on our monthly payment.";
+                    
+                    // Center vertically in the remaining space
+                    wrapText(ctx, `"${displayText}"`, 540, mainImgY + 180, 900, 40, "italic 700 Montserrat", 4);
+                    
+                    // Verified Badge
+                    ctx.font = "30px Roboto";
+                    ctx.fillStyle = "#64748b";
+                    ctx.fillText("- Verified Client", 540, mainImgY + mainImgH - 40);
+
+                    ctx.restore();
+
+                } else {
+                    // Standard Image Draw
+                    ctx.save();
+                    ctx.roundRect(40, mainImgY, 1000, mainImgH, 20); 
+                    ctx.clip();
+                    if (state.images.main) drawImageCover(ctx, state.images.main, 40, mainImgY, 1000, mainImgH);
+                    else { ctx.fillStyle = "#cbd5e1"; ctx.fillRect(40, mainImgY, 1000, mainImgH); ctx.fillStyle = "#64748b"; ctx.textAlign = "center"; ctx.fillText("Upload Photo", 540, mainImgY + (mainImgH/2)); }
+                    ctx.restore();
+                }
 
                 // HEADER LOGIC (Square)
                 if (isOpenHouse) {
@@ -975,7 +1019,12 @@
                 ctx.fillStyle = state.primaryColor; ctx.textAlign = "left"; ctx.font = "700 28px Montserrat";
                 let b1T = state.storyTitle; let b1Txt = state.borrowerStory;
                 if (state.template === 'openhouse') { b1T = state.propertyTitle; b1Txt = state.propertyDesc; }
-                else if (state.template === 'refinance') { b1T = state.storyTitle; b1Txt = state.borrowerStory; }
+                else if (state.template === 'refinance') { 
+                    // For Refi, we used the main image area for the review, 
+                    // so we repurpose this box for a "Call to Action" or Stats
+                    b1T = "THE RESULTS"; 
+                    b1Txt = state.refiDetails || "Contact us today for a free rate review.";
+                }
                 ctx.fillText(b1T.toUpperCase(), 70, contentStart + 45);
                 ctx.fillStyle = "#334155"; wrapText(ctx, b1Txt, 70, contentStart + 85, 420, 24, "Roboto", 6);
 
@@ -999,7 +1048,8 @@
                 } else if (state.template === 'refinance') {
                     ctx.fillStyle = "#16a34a"; ctx.font = "24px FontAwesome"; ctx.fillText("\uf3d1", 590, contentStart + 45); 
                     ctx.fillStyle = state.primaryColor; ctx.font = "700 28px Montserrat"; ctx.fillText(state.refiTitle.toUpperCase(), 630, contentStart + 45);
-                    ctx.fillStyle = "#334155"; wrapText(ctx, state.refiDetails, 590, contentStart + 100, 420, 32, "Roboto", 5);
+                    // For Refi, this is the second box. We can put contact info or just the same details
+                    ctx.fillStyle = "#334155"; wrapText(ctx, "Ready to see how much you could save? Reach out today for a free total cost analysis!", 590, contentStart + 100, 420, 32, "Roboto", 5);
                 } else if (state.template === 'openhouse') {
                     ctx.fillStyle = "#ea580c"; ctx.font = "24px FontAwesome"; ctx.fillText("\uf073", 590, contentStart + 45); 
                     ctx.fillStyle = state.primaryColor; ctx.font = "700 28px Montserrat"; ctx.fillText(state.ohBoxTitle.toUpperCase(), 630, contentStart + 45);
@@ -1018,6 +1068,7 @@
             ctx.fillRect(0, footerY, W, 120);
 
             if (isFlyer || isOpenHouse) {
+                // ... (Footer code remains same) ...
                 // Partner + Agent Footer (Shared Logic)
                 const headshotSize = 100;
                 const pHeadshotX = 40;
@@ -1147,6 +1198,7 @@
             const ohDescGroup = document.getElementById('openHouseDescGroup');
             const calcInputs = document.getElementById('calcInputs');
             const storyLabel = document.getElementById('storyLabel');
+            const mainPhotoGroup = document.getElementById('mainPhotoGroup');
             
             // Editable Title Inputs
             const storyTitleInput = document.getElementById('storyTitle');
@@ -1157,6 +1209,7 @@
             storyGroup.classList.add('hidden-group');
             ohDescGroup.classList.add('hidden-group');
             calcInputs.classList.add('hidden-group');
+            mainPhotoGroup.classList.remove('hidden-group');
 
             if (t === 'purchase') {
                 purchaseInputs.classList.remove('hidden-group');
@@ -1172,11 +1225,12 @@
             else if (t === 'refinance') {
                 refiInputs.classList.remove('hidden-group');
                 storyGroup.classList.remove('hidden-group');
-                storyLabel.innerText = "Financial Goal";
+                storyLabel.innerText = "Client Review / Quote";
+                mainPhotoGroup.classList.add('hidden-group'); // Hide photo for refi
                 
                 // Set Default Title for Refinance
-                storyTitleInput.value = "FINANCIAL GOAL";
-                state.storyTitle = "FINANCIAL GOAL";
+                storyTitleInput.value = "FIVE STAR SERVICE";
+                state.storyTitle = "FIVE STAR SERVICE";
 
                 if (['JUST CLOSED!', 'OPEN HOUSE'].includes(state.statusText)) { state.statusText = "REFINANCED!"; document.getElementById('statusText').value = "REFINANCED!"; }
             } 
@@ -1195,6 +1249,62 @@
                 if (['JUST CLOSED!', 'REFINANCED!'].includes(state.statusText)) { state.statusText = "OPEN HOUSE"; document.getElementById('statusText').value = "OPEN HOUSE"; }
             }
         }
+
+        // --- AI MAGIC REWRITE ---
+        document.getElementById('magicRewriteBtn').addEventListener('click', () => {
+            const rawText = document.getElementById('borrowerStory').value;
+            if(!rawText || rawText.length < 5) {
+                showToast("Please enter some bullets first!");
+                return;
+            }
+
+            // Simple "AI" Heuristic Templates
+            const phrases = rawText.split(/,|\n/).map(s => s.trim()).filter(s => s.length > 0);
+            
+            // Templates
+            const intros = [
+                "We are thrilled to share another success story!",
+                "Just crossed the finish line for another amazing client.",
+                "Another happy family is set up for success.",
+                "Big wins today for our clients!"
+            ];
+            
+            const connectors = [
+                "We were able to",
+                "The team successfully",
+                "We helped them"
+            ];
+
+            const closers = [
+                "It's what we do best.",
+                "Honored to be part of their journey.",
+                "Ready to do the same for you!",
+                "Another seamless closing in the books."
+            ];
+
+            // Build the story
+            let story = intros[Math.floor(Math.random() * intros.length)] + " ";
+            
+            if (phrases.length > 0) {
+                story += connectors[Math.floor(Math.random() * connectors.length)] + " ";
+                // Join phrases naturally
+                if (phrases.length === 1) {
+                    story += phrases[0] + ". ";
+                } else if (phrases.length === 2) {
+                    story += phrases[0] + " and " + phrases[1] + ". ";
+                } else {
+                    const last = phrases.pop();
+                    story += phrases.join(", ") + ", and " + last + ". ";
+                }
+            }
+            
+            story += closers[Math.floor(Math.random() * closers.length)];
+
+            document.getElementById('borrowerStory').value = story;
+            state.borrowerStory = story;
+            drawPost();
+            showToast("✨ Magic Rewrite Complete!");
+        });
 
         // --- SOCIAL SHARE LOGIC (NEW) ---
         document.getElementById('shareBtn').addEventListener('click', async () => {
