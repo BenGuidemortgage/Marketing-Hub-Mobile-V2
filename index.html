@@ -150,14 +150,14 @@
 
                 <!-- Section 2: Posting -->
                 <div class="help-section">
-                    <h4 class="font-bold text-purple-900 mb-2 text-base">📱 Posting to Instagram & Facebook</h4>
-                    <p class="mb-2 italic text-xs bg-purple-50 p-2 rounded border border-purple-100">Instagram doesn't allow apps to fill in the caption for you automatically. You have to Paste it.</p>
+                    <h4 class="font-bold text-purple-900 mb-2 text-base">📱 Posting to Social Media</h4>
+                    <p class="mb-2 italic text-xs bg-purple-50 p-2 rounded border border-purple-100"><strong>Note:</strong> Most apps (Instagram/Facebook) do not allow us to fill in the caption for you automatically.</p>
                     <ol class="list-decimal pl-5 space-y-2 font-medium">
                         <li>Write your caption in the <strong>Social Post</strong> box.</li>
                         <li>Tap <strong>"Copy Caption to Clipboard"</strong>.</li>
                         <li>Tap the big purple <strong>"Share to Apps"</strong> button.</li>
-                        <li>Select Instagram (Feed or Stories).</li>
-                        <li>When Instagram opens, tap the text box and select <strong>Paste</strong> to insert your caption!</li>
+                        <li>Select your app (Instagram, Facebook, etc).</li>
+                        <li>When the app opens, <strong>Paste</strong> your caption!</li>
                     </ol>
                 </div>
 
@@ -173,16 +173,27 @@
 
                 <!-- Section 4: Troubleshooting -->
                 <div class="help-section">
-                    <h4 class="font-bold text-red-700 mb-2 text-base">🔧 Troubleshooting</h4>
-                    <p class="mb-2"><strong>"Share to Apps" isn't working?</strong></p>
-                    <p class="mb-2">Some older Androids or specific browsers (like inside the Gmail app) block sharing. Use this backup method:</p>
-                    <ol class="list-decimal pl-5 space-y-1">
-                        <li>Tap the blue <strong>"Download Image"</strong> button.</li>
-                        <li>A popup will appear with your image.</li>
-                        <li><strong>Long Press</strong> (tap and hold) the image.</li>
-                        <li>Select <strong>"Save to Photos"</strong>.</li>
-                        <li>Open Instagram manually and upload the photo from your gallery.</li>
-                    </ol>
+                    <h4 class="font-bold text-red-700 mb-2 text-base">🔧 Troubleshooting & Missing Apps</h4>
+                    
+                    <div class="mb-4">
+                        <p class="font-bold text-slate-800 text-xs mb-1">APPS NOT SHOWING UP?</p>
+                        <p class="mb-2">If LinkedIn or Facebook aren't in your share menu:</p>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li><strong>iPhone:</strong> Scroll the app row to the far right, tap <strong>"More" (...)</strong>, then tap <strong>"Edit"</strong> at the top. You can toggle apps on/off there.</li>
+                            <li><strong>Android:</strong> Tap <strong>"More"</strong> or expand the share sheet to see hidden apps.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-slate-800 text-xs mb-1">FACEBOOK / LINKEDIN FAILED?</p>
+                        <p class="mb-2">These apps often block direct sharing from mobile browsers. The 100% reliable fix is:</p>
+                        <ol class="list-decimal pl-5 space-y-1">
+                            <li>Tap the blue <strong>"Download Image"</strong> button.</li>
+                            <li>Save the image to your phone's photos.</li>
+                            <li>Open the Facebook/LinkedIn app manually.</li>
+                            <li>Create a new post and select the image from your gallery.</li>
+                        </ol>
+                    </div>
                 </div>
 
             </div>
@@ -201,7 +212,7 @@
         <div class="p-5 border-b border-gray-100 bg-slate-50 flex justify-between items-center sticky top-0 z-20 md:static">
             <div>
                 <h1 class="text-xl font-bold text-slate-800"><i class="fas fa-layer-group mr-2 text-blue-900"></i>Team Marketing Hub</h1>
-                <p class="text-xs text-gray-500 mt-1">Mobile V4.8 - Help Center Added</p>
+                <p class="text-xs text-gray-500 mt-1">Mobile V5.0 - Editable Headers</p>
             </div>
             <div class="flex gap-2">
                 <button id="helpBtn" class="text-blue-900 text-sm font-bold border border-blue-200 p-2 rounded bg-white" title="Help Center">
@@ -307,11 +318,13 @@
 
                 <div id="storyInputGroup" class="input-group">
                     <label class="block text-xs font-medium text-gray-700 mb-1" id="storyLabel">Borrower Story</label>
+                    <input type="text" id="storyTitle" value="BORROWER SUCCESS" class="w-full mb-2 p-2 border rounded text-sm font-bold border-gray-300 focus:border-blue-500 outline-none" placeholder="Section Title">
                     <textarea id="borrowerStory" rows="4" class="w-full p-2 border rounded text-sm border-gray-300 focus:border-blue-500 outline-none" placeholder="Tell the story...">Another smooth closing! We successfully navigated a complex self-employed application and got the Smith family into their dream home in just 28 days.</textarea>
                 </div>
 
                 <div id="openHouseDescGroup" class="input-group hidden-group">
                     <label class="block text-xs font-medium text-gray-700 mb-1">Property Description</label>
+                    <input type="text" id="propertyTitle" value="PROPERTY DETAILS" class="w-full mb-2 p-2 border rounded text-sm font-bold border-gray-300 focus:border-blue-500 outline-none" placeholder="Section Title">
                     <textarea id="propertyDesc" rows="4" class="w-full p-2 border rounded text-sm border-gray-300 focus:border-blue-500 outline-none" placeholder="Beautiful 4 bed, 3 bath...">Stunning turn-key home in the heart of the city! Features a gourmet kitchen, hardwood floors, and a spacious backyard oasis.</textarea>
                 </div>
             </div>
@@ -396,6 +409,7 @@
                     </div>
                     
                     <div id="partnerControls" class="space-y-2 transition-all duration-300">
+                        <input type="text" id="partnerBoxTitle" value="PARTNER SHOUTOUT" class="w-full p-2 border rounded text-sm font-bold border-gray-300 outline-none" placeholder="Box Title (e.g. Partner Shoutout)">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="block text-[10px] font-medium text-gray-700 mb-1">Headshot</label>
@@ -424,6 +438,7 @@
 
                 <div id="openHouseInputs" class="input-group hidden-group">
                     <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Event Details</h3>
+                    <input type="text" id="ohBoxTitle" value="WHEN & WHERE" class="w-full mb-2 p-2 border rounded text-sm font-bold border-gray-300 focus:border-blue-500 outline-none" placeholder="Section Title">
                     <div class="space-y-2">
                         <input type="text" id="ohDate" value="Sunday, Oct 24th" class="w-full p-2 border rounded text-sm font-bold border-gray-300 outline-none" placeholder="Date">
                         <input type="text" id="ohTime" value="1:00 PM - 3:00 PM" class="w-full p-2 border rounded text-sm border-gray-300 outline-none" placeholder="Time">
@@ -581,6 +596,12 @@
             sc2Label: 'FHA', sc2Down: 3.5, sc2Rate: 5.99,
             calcDisclaimer: document.getElementById('calcDisclaimer').value,
             socialCaption: '', // for posting
+            
+            // New Editable Titles
+            storyTitle: document.getElementById('storyTitle').value,
+            partnerBoxTitle: document.getElementById('partnerBoxTitle').value,
+            propertyTitle: document.getElementById('propertyTitle').value,
+            ohBoxTitle: document.getElementById('ohBoxTitle').value,
             
             images: { agent: null, main: null, partner: null, partnerLogo: null, logo: null }
         };
@@ -952,10 +973,10 @@
                 ctx.fillStyle = "#FFFFFF"; ctx.shadowColor = "rgba(0,0,0,0.05)"; ctx.shadowBlur = 10;
                 ctx.roundRect(40, contentStart, 480, 300, 15); ctx.fill(); ctx.shadowBlur = 0;
                 ctx.fillStyle = state.primaryColor; ctx.textAlign = "left"; ctx.font = "700 28px Montserrat";
-                let b1T = "BORROWER SUCCESS"; let b1Txt = state.borrowerStory;
-                if (state.template === 'openhouse') { b1T = "PROPERTY DETAILS"; b1Txt = state.propertyDesc; }
-                else if (state.template === 'refinance') { b1T = "FINANCIAL GOAL"; b1Txt = state.borrowerStory; }
-                ctx.fillText(b1T, 70, contentStart + 45);
+                let b1T = state.storyTitle; let b1Txt = state.borrowerStory;
+                if (state.template === 'openhouse') { b1T = state.propertyTitle; b1Txt = state.propertyDesc; }
+                else if (state.template === 'refinance') { b1T = state.storyTitle; b1Txt = state.borrowerStory; }
+                ctx.fillText(b1T.toUpperCase(), 70, contentStart + 45);
                 ctx.fillStyle = "#334155"; wrapText(ctx, b1Txt, 70, contentStart + 85, 420, 24, "Roboto", 6);
 
                 ctx.fillStyle = "#FFFFFF"; ctx.shadowColor = "rgba(0,0,0,0.05)"; ctx.shadowBlur = 10;
@@ -964,7 +985,7 @@
                 // Right Box Content
                 if (state.template === 'purchase') {
                     ctx.fillStyle = "#f59e0b"; ctx.font = "24px FontAwesome"; ctx.fillText("\uf005", 590, contentStart + 45); 
-                    ctx.fillStyle = state.primaryColor; ctx.font = "700 28px Montserrat"; ctx.fillText("PARTNER SHOUTOUT", 630, contentStart + 45);
+                    ctx.fillStyle = state.primaryColor; ctx.font = "700 28px Montserrat"; ctx.fillText(state.partnerBoxTitle.toUpperCase(), 630, contentStart + 45);
                     if (state.partnerEnabled) {
                         const pX = 600; const pY = contentStart + 70; const pSize = 120;
                         ctx.save(); ctx.beginPath(); ctx.arc(pX + (pSize/2), pY + (pSize/2), pSize/2, 0, Math.PI * 2); ctx.clip();
@@ -981,7 +1002,7 @@
                     ctx.fillStyle = "#334155"; wrapText(ctx, state.refiDetails, 590, contentStart + 100, 420, 32, "Roboto", 5);
                 } else if (state.template === 'openhouse') {
                     ctx.fillStyle = "#ea580c"; ctx.font = "24px FontAwesome"; ctx.fillText("\uf073", 590, contentStart + 45); 
-                    ctx.fillStyle = state.primaryColor; ctx.font = "700 28px Montserrat"; ctx.fillText("WHEN & WHERE", 630, contentStart + 45);
+                    ctx.fillStyle = state.primaryColor; ctx.font = "700 28px Montserrat"; ctx.fillText(state.ohBoxTitle.toUpperCase(), 630, contentStart + 45);
                     const sY = contentStart + 100;
                     ctx.font = "24px FontAwesome"; ctx.fillStyle = state.secondaryColor; ctx.fillText("\uf017", 590, sY);
                     ctx.fillStyle = "#1e293b"; ctx.font = "700 28px Montserrat"; ctx.fillText(state.ohDate, 630, sY);
@@ -1101,7 +1122,7 @@
             });
         });
 
-        const textInputs = ['agentName', 'agentTitle', 'agentContact', 'companyNmls', 'socialInsta', 'socialFb', 'socialLi', 'statusText', 'borrowerStory', 'partnerName', 'partnerTitle', 'partnerContact', 'partnerShoutout', 'refiTitle', 'refiDetails', 'propertyDesc', 'ohDate', 'ohTime', 'ohAddress'];
+        const textInputs = ['agentName', 'agentTitle', 'agentContact', 'companyNmls', 'socialInsta', 'socialFb', 'socialLi', 'statusText', 'borrowerStory', 'partnerName', 'partnerTitle', 'partnerContact', 'partnerShoutout', 'refiTitle', 'refiDetails', 'propertyDesc', 'ohDate', 'ohTime', 'ohAddress', 'storyTitle', 'partnerBoxTitle', 'propertyTitle', 'ohBoxTitle'];
         textInputs.forEach(id => {
             document.getElementById(id).addEventListener('input', (e) => {
                 state[id] = e.target.value;
@@ -1126,6 +1147,9 @@
             const ohDescGroup = document.getElementById('openHouseDescGroup');
             const calcInputs = document.getElementById('calcInputs');
             const storyLabel = document.getElementById('storyLabel');
+            
+            // Editable Title Inputs
+            const storyTitleInput = document.getElementById('storyTitle');
 
             purchaseInputs.classList.add('hidden-group');
             refiInputs.classList.add('hidden-group');
@@ -1138,12 +1162,22 @@
                 purchaseInputs.classList.remove('hidden-group');
                 storyGroup.classList.remove('hidden-group');
                 storyLabel.innerText = "Borrower Story";
+                
+                // Set Default Title for Purchase
+                storyTitleInput.value = "BORROWER SUCCESS";
+                state.storyTitle = "BORROWER SUCCESS";
+
                 if (['REFINANCED!', 'OPEN HOUSE'].includes(state.statusText)) { state.statusText = "JUST CLOSED!"; document.getElementById('statusText').value = "JUST CLOSED!"; }
             } 
             else if (t === 'refinance') {
                 refiInputs.classList.remove('hidden-group');
                 storyGroup.classList.remove('hidden-group');
                 storyLabel.innerText = "Financial Goal";
+                
+                // Set Default Title for Refinance
+                storyTitleInput.value = "FINANCIAL GOAL";
+                state.storyTitle = "FINANCIAL GOAL";
+
                 if (['JUST CLOSED!', 'OPEN HOUSE'].includes(state.statusText)) { state.statusText = "REFINANCED!"; document.getElementById('statusText').value = "REFINANCED!"; }
             } 
             else if (t === 'openhouse') {
