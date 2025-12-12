@@ -28,7 +28,8 @@
 
         .input-group { transition: all 0.3s ease-in-out; }
         .hidden-group { display: none; }
-        
+        .hidden { display: none !important; }
+
         /* Loading & Error Overlays */
         .status-overlay {
             position: absolute;
@@ -41,15 +42,10 @@
             z-index: 50;
             text-align: center;
             padding: 20px;
-            transition: opacity 0.5s ease; 
-        }
-        .status-overlay.fade-out {
-            opacity: 0;
-            pointer-events: none;
         }
 
-        /* Modal Base Styles */
-        .modal-overlay {
+        /* Modal for Saving Images */
+        #saveModal {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.85);
@@ -63,35 +59,16 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        .modal-overlay.active {
+        #saveModal.active {
             visibility: visible;
             opacity: 1;
         }
-
         #finalImage {
             max-width: 100%;
             max-height: 70vh;
             border-radius: 8px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
-
-        /* Help Modal Specifics */
-        .help-content {
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        .help-section {
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 1rem;
-            margin-bottom: 1rem;
-        }
-        .help-section:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-            margin-bottom: 0;
-        }
-
-        .hidden { display: none !important; }
 
         #toast {
             visibility: hidden;
@@ -119,8 +96,8 @@
 </head>
 <body class="flex flex-col md:flex-row md:h-screen md:overflow-hidden bg-gray-100">
 
-    <!-- SAVE MODAL (Popup for Mobile Download) -->
-    <div id="saveModal" class="modal-overlay">
+    <!-- SAVE MODAL (Popup for Mobile) -->
+    <div id="saveModal">
         <div class="bg-white p-4 rounded-lg w-full max-w-sm text-center mb-4 relative">
             <h3 class="font-bold text-gray-800 text-lg mb-1">Save Your Image</h3>
             <p class="text-sm text-gray-500 mb-3">Long Press (Tap & Hold) the image below, then select <strong>"Save to Photos"</strong></p>
@@ -131,136 +108,17 @@
         <img id="finalImage" src="" alt="Generated Post">
     </div>
 
-    <!-- HELP MODAL -->
-    <div id="helpModal" class="modal-overlay">
-        <div class="bg-white w-full max-w-lg rounded-xl shadow-2xl flex flex-col max-h-[90vh]">
-            <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-xl">
-                <h3 class="font-bold text-slate-800 text-lg"><i class="fas fa-life-ring text-blue-600 mr-2"></i>Help Center</h3>
-                <button id="closeHelpBtn" class="text-gray-400 hover:text-gray-600 p-1">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
-            </div>
-            
-            <div class="p-5 help-content text-sm text-slate-600">
-                
-                <!-- Section 1: Getting Started -->
-                <div class="help-section">
-                    <h4 class="font-bold text-blue-900 mb-2 text-base">🚀 Getting Started</h4>
-                    <ul class="list-disc pl-5 space-y-1">
-                        <li><strong>Select Campaign:</strong> Choose "Purchase" for closings, "Refinance" for rate drops, or "Flyer" for printable PDFs.</li>
-                        <li><strong>Photos:</strong> Click "Choose File" to upload your headshot or the house photo. The preview updates instantly!</li>
-                        <li><strong>Colors:</strong> Scroll down to "Brand Theme" to match the graphic to your company colors.</li>
-                    </ul>
-                </div>
-
-                <!-- Section 2: Magic Rewrite -->
-                <div class="help-section">
-                    <h4 class="font-bold text-pink-600 mb-2 text-base">✨ Magic Rewrite (New!)</h4>
-                    <p class="mb-2">Stuck on what to write? Let our tool compose it for you.</p>
-                    <ol class="list-decimal pl-5 space-y-1">
-                        <li>In the "Borrower Story" box, type simple bullet points (e.g., "saved 200, fast closing, happy").</li>
-                        <li>Tap the purple <strong>"✨ Magic Rewrite"</strong> button.</li>
-                        <li>The tool will automatically convert your bullets into a professional, confident sentence!</li>
-                    </ol>
-                </div>
-
-                <!-- Section 3: Customization & Templates (NEW) -->
-                <div class="help-section">
-                    <h4 class="font-bold text-teal-700 mb-2 text-base">🎨 Customization & Templates</h4>
-                    
-                    <div class="mb-3">
-                        <p class="font-bold text-slate-800 text-xs mb-1">EDITABLE HEADERS</p>
-                        <p class="mb-1">You can now rename section titles!</p>
-                        <ul class="list-disc pl-5 space-y-1">
-                            <li>Click directly on the text input above sections like <strong>"BORROWER SUCCESS"</strong> or <strong>"PARTNER SHOUTOUT"</strong>.</li>
-                            <li>Type your own custom header (e.g., "CLIENT WIN" or "SPECIAL THANKS").</li>
-                        </ul>
-                    </div>
-
-                    <div>
-                        <p class="font-bold text-slate-800 text-xs mb-1">REFINANCE REVIEWS</p>
-                        <p class="mb-1">The Refinance template is designed for stats & testimonials:</p>
-                        <ul class="list-disc pl-5 space-y-1">
-                            <li><strong>No Photo Needed:</strong> It automatically hides the main photo upload.</li>
-                            <li><strong>Review Card:</strong> Displays your text as a 5-star review or savings highlight card.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Section 4: Posting -->
-                <div class="help-section">
-                    <h4 class="font-bold text-purple-900 mb-2 text-base">📱 Posting to Social Media</h4>
-                    <p class="mb-2 italic text-xs bg-purple-50 p-2 rounded border border-purple-100"><strong>Note:</strong> Most apps (Instagram/Facebook) do not allow us to fill in the caption for you automatically.</p>
-                    <ol class="list-decimal pl-5 space-y-2 font-medium">
-                        <li>Write your caption in the <strong>Social Post</strong> box.</li>
-                        <li>Tap <strong>"Copy Caption to Clipboard"</strong>.</li>
-                        <li>Tap the big purple <strong>"Share to Apps"</strong> button.</li>
-                        <li>Select your app (Instagram, Facebook, etc).</li>
-                        <li>When the app opens, <strong>Paste</strong> your caption!</li>
-                    </ol>
-                </div>
-
-                <!-- Section 5: Profile & Teams -->
-                <div class="help-section">
-                    <h4 class="font-bold text-indigo-900 mb-2 text-base">💾 Saving Profiles</h4>
-                    <ul class="list-disc pl-5 space-y-1">
-                        <li><strong>My Profile:</strong> Your name, photo, and license info auto-save to your browser as you type.</li>
-                        <li><strong>Team Hub:</strong> If you work with a team, fill out their info and click <strong>"Save Current Profile to Hub"</strong>. You can then instantly swap between team members using the dropdown menu.</li>
-                        <li><strong>Partner Hub:</strong> Works the same way! Save your favorite Realtors so you don't have to re-upload their logos every time.</li>
-                    </ul>
-                </div>
-
-                <!-- Section 6: Troubleshooting -->
-                <div class="help-section">
-                    <h4 class="font-bold text-red-700 mb-2 text-base">🔧 Troubleshooting & Missing Apps</h4>
-                    
-                    <div class="mb-4">
-                        <p class="font-bold text-slate-800 text-xs mb-1">APPS NOT SHOWING UP?</p>
-                        <p class="mb-2">If LinkedIn or Facebook aren't in your share menu:</p>
-                        <ul class="list-disc pl-5 space-y-1">
-                            <li><strong>iPhone:</strong> Scroll the app row to the far right, tap <strong>"More" (...)</strong>, then tap <strong>"Edit"</strong> at the top. You can toggle apps on/off there.</li>
-                            <li><strong>Android:</strong> Tap <strong>"More"</strong> or expand the share sheet to see hidden apps.</li>
-                        </ul>
-                    </div>
-
-                    <div>
-                        <p class="font-bold text-slate-800 text-xs mb-1">FACEBOOK / LINKEDIN FAILED?</p>
-                        <p class="mb-2">These apps often block direct sharing from mobile browsers. The 100% reliable fix is:</p>
-                        <ol class="list-decimal pl-5 space-y-1">
-                            <li>Tap the blue <strong>"Download Image"</strong> button.</li>
-                            <li>Save the image to your phone's photos.</li>
-                            <li>Open the Facebook/LinkedIn app manually.</li>
-                            <li>Create a new post and select the image from your gallery.</li>
-                        </ol>
-                    </div>
-                </div>
-
-            </div>
-            
-            <div class="p-4 border-t border-gray-100 bg-gray-50 rounded-b-xl text-center">
-                <button onclick="document.getElementById('helpModal').classList.remove('active')" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 px-6 rounded-lg transition-colors">
-                    Got it!
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- LEFT PANEL: CONTROLS -->
     <div class="w-full md:w-96 bg-white flex flex-col z-10 shadow-lg md:h-full md:border-r border-gray-200 order-2 md:order-1">
         
         <div class="p-5 border-b border-gray-100 bg-slate-50 flex justify-between items-center sticky top-0 z-20 md:static">
             <div>
                 <h1 class="text-xl font-bold text-slate-800"><i class="fas fa-layer-group mr-2 text-blue-900"></i>Team Marketing Hub</h1>
-                <p class="text-xs text-gray-500 mt-1">Mobile V5.5 - Instant Load Fix</p>
+                <p class="text-xs text-gray-500 mt-1">Mobile V4.2 - Final Build</p>
             </div>
-            <div class="flex gap-2">
-                <button id="helpBtn" class="text-blue-900 text-sm font-bold border border-blue-200 p-2 rounded bg-white" title="Help Center">
-                    <i class="fas fa-question-circle"></i>
-                </button>
-                <button onclick="document.getElementById('preview-section').scrollIntoView({behavior: 'smooth'})" class="md:hidden text-blue-900 text-sm font-bold border border-blue-200 p-2 rounded bg-white">
-                    <i class="fas fa-eye"></i> View
-                </button>
-            </div>
+            <button onclick="document.getElementById('preview-section').scrollIntoView({behavior: 'smooth'})" class="md:hidden text-blue-900 text-sm font-bold border border-blue-200 p-2 rounded bg-white">
+                <i class="fas fa-eye"></i> View
+            </button>
         </div>
 
         <div class="flex-1 p-5 controls-panel space-y-6 md:overflow-y-auto">
@@ -271,7 +129,8 @@
                 <div class="relative">
                     <select id="templateSelect" class="w-full p-2 pl-9 border border-blue-200 rounded text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-900 focus:border-blue-900 appearance-none bg-white outline-none">
                         <option value="purchase">Purchase Closing (Social)</option>
-                        <option value="refinance">Refinance (Review/Stats)</option>
+                        <option value="refinance">Refinance Success (Social)</option>
+                        <option value="announcement">Market Update / News (Text Only)</option>
                         <option value="openhouse">Open House (Social)</option>
                         <option value="flyer">Open House Flyer (Print 8.5x11)</option>
                     </select>
@@ -300,7 +159,7 @@
                         <select id="savedAgentSelect" class="flex-1 text-xs border border-gray-300 rounded p-1.5 bg-white outline-none text-gray-700">
                             <option value="">Select a team member...</option>
                         </select>
-                        <button id="deleteAgentBtn" class="hidden text-xs text-red-500 hover:bg-red-50 p-1.5 rounded border border-transparent hover:border-red-200" title="Delete from Hub">
+                        <button id="deleteAgentBtn" class="hidden text-xs text-red-500 hover:bg-red-50 p-1.5 rounded border border-transparent hover:border-red-200" title="Delete from Team Hub">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -326,14 +185,7 @@
                 <input type="text" id="agentTitle" value="Mortgage Loan Originator" class="w-full p-2 border rounded text-sm bg-gray-50 text-gray-700 border-gray-200 focus:bg-white focus:border-blue-500 outline-none transition-colors" placeholder="Your Title">
                 <input type="text" id="agentContact" value="(419)-266-6229 | NMLS# 2599175" class="w-full p-2 border rounded text-sm bg-gray-50 text-gray-700 border-gray-200 focus:bg-white focus:border-blue-500 outline-none transition-colors" placeholder="Contact Info">
                 
-                <!-- NEW SOCIAL HANDLES -->
-                <div class="grid grid-cols-3 gap-2 mt-2">
-                    <input type="text" id="socialInsta" class="w-full p-1.5 border rounded text-xs text-gray-700 border-gray-200 outline-none" placeholder="@Instagram">
-                    <input type="text" id="socialFb" class="w-full p-1.5 border rounded text-xs text-gray-700 border-gray-200 outline-none" placeholder="/Facebook">
-                    <input type="text" id="socialLi" class="w-full p-1.5 border rounded text-xs text-gray-700 border-gray-200 outline-none" placeholder="/LinkedIn">
-                </div>
-
-                <div class="bg-yellow-50 p-2 rounded border border-yellow-200 mt-2">
+                <div class="bg-yellow-50 p-2 rounded border border-yellow-200">
                     <label class="block text-[10px] font-bold text-yellow-800 mb-1 uppercase">Compliance Info</label>
                     <input type="text" id="companyNmls" value="Company NMLS# 2327585" class="w-full p-1.5 border rounded text-xs text-gray-700 border-gray-200 focus:border-blue-500 outline-none" placeholder="Company NMLS ID">
                 </div>
@@ -345,30 +197,23 @@
             <div class="space-y-3">
                 <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Post Content</h3>
                 
-                <div id="mainPhotoGroup">
+                <div id="mainPhotoContainer">
                     <label class="block text-xs font-medium text-gray-700 mb-1" id="mainPhotoLabel">Main Photo (Clients/House)</label>
                     <input type="file" id="mainPhotoInput" accept="image/*" class="w-full text-xs text-slate-500 file:mr-2 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1">Status Banner</label>
+                    <label class="block text-xs font-medium text-gray-700 mb-1" id="statusLabel">Status Banner</label>
                     <input type="text" id="statusText" value="JUST CLOSED!" class="w-full p-2 border rounded text-sm font-bold text-green-700 border-gray-300 focus:border-green-600 outline-none" placeholder="e.g. JUST CLOSED!">
                 </div>
 
                 <div id="storyInputGroup" class="input-group">
                     <label class="block text-xs font-medium text-gray-700 mb-1" id="storyLabel">Borrower Story</label>
-                    <div class="flex justify-between items-center mb-1">
-                        <input type="text" id="storyTitle" value="BORROWER SUCCESS" class="flex-1 mr-2 p-1.5 border rounded text-xs font-bold border-gray-300 focus:border-blue-500 outline-none" placeholder="Section Title">
-                        <button id="magicRewriteBtn" class="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold px-2 py-1 rounded hover:opacity-90 transition-opacity flex items-center gap-1 shadow-sm">
-                            <i class="fas fa-wand-magic-sparkles"></i> Magic Rewrite
-                        </button>
-                    </div>
-                    <textarea id="borrowerStory" rows="4" class="w-full p-2 border rounded text-sm border-gray-300 focus:border-blue-500 outline-none" placeholder="Tell the story (or paste bullets for AI)...">Another smooth closing! We successfully navigated a complex self-employed application and got the Smith family into their dream home in just 28 days.</textarea>
+                    <textarea id="borrowerStory" rows="4" class="w-full p-2 border rounded text-sm border-gray-300 focus:border-blue-500 outline-none" placeholder="Tell the story...">Another smooth closing! We successfully navigated a complex self-employed application and got the Smith family into their dream home in just 28 days.</textarea>
                 </div>
 
                 <div id="openHouseDescGroup" class="input-group hidden-group">
                     <label class="block text-xs font-medium text-gray-700 mb-1">Property Description</label>
-                    <input type="text" id="propertyTitle" value="PROPERTY DETAILS" class="w-full mb-2 p-2 border rounded text-sm font-bold border-gray-300 focus:border-blue-500 outline-none" placeholder="Section Title">
                     <textarea id="propertyDesc" rows="4" class="w-full p-2 border rounded text-sm border-gray-300 focus:border-blue-500 outline-none" placeholder="Beautiful 4 bed, 3 bath...">Stunning turn-key home in the heart of the city! Features a gourmet kitchen, hardwood floors, and a spacious backyard oasis.</textarea>
                 </div>
             </div>
@@ -453,7 +298,6 @@
                     </div>
                     
                     <div id="partnerControls" class="space-y-2 transition-all duration-300">
-                        <input type="text" id="partnerBoxTitle" value="PARTNER SHOUTOUT" class="w-full p-2 border rounded text-sm font-bold border-gray-300 outline-none" placeholder="Box Title (e.g. Partner Shoutout)">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="block text-[10px] font-medium text-gray-700 mb-1">Headshot</label>
@@ -473,7 +317,7 @@
                 </div>
 
                 <div id="refiInputs" class="input-group hidden-group">
-                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Savings Breakdown</h3>
+                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2" id="refiGroupLabel">Savings Breakdown</h3>
                     <div class="space-y-2">
                          <input type="text" id="refiTitle" value="MONTHLY SAVINGS" class="w-full p-2 border rounded text-sm font-bold border-gray-300 outline-none" placeholder="Header (e.g. Monthly Savings)">
                          <textarea id="refiDetails" rows="3" class="w-full p-2 border rounded text-sm border-gray-300 outline-none" placeholder="Details...">We lowered their rate by 1.5% and saved them $450 every single month!</textarea>
@@ -482,7 +326,6 @@
 
                 <div id="openHouseInputs" class="input-group hidden-group">
                     <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Event Details</h3>
-                    <input type="text" id="ohBoxTitle" value="WHEN & WHERE" class="w-full mb-2 p-2 border rounded text-sm font-bold border-gray-300 focus:border-blue-500 outline-none" placeholder="Section Title">
                     <div class="space-y-2">
                         <input type="text" id="ohDate" value="Sunday, Oct 24th" class="w-full p-2 border rounded text-sm font-bold border-gray-300 outline-none" placeholder="Date">
                         <input type="text" id="ohTime" value="1:00 PM - 3:00 PM" class="w-full p-2 border rounded text-sm border-gray-300 outline-none" placeholder="Time">
@@ -506,27 +349,12 @@
                  </div>
             </div>
 
-            <!-- SECTION: SOCIAL SHARE -->
-            <div class="bg-purple-50 p-3 rounded-lg border border-purple-100 space-y-3">
-                <h3 class="text-xs font-bold text-purple-900 uppercase tracking-wider"><i class="fas fa-share-alt mr-1"></i> Social Post</h3>
-                <textarea id="socialCaption" rows="3" class="w-full p-2 border rounded text-sm border-purple-200 focus:border-purple-500 outline-none" placeholder="Draft your social media caption here..."></textarea>
-                <button id="copyCaptionBtn" class="w-full text-xs text-purple-700 font-semibold py-1.5 rounded hover:bg-purple-100 border border-purple-200 transition-colors">
-                    <i class="fas fa-copy mr-1"></i> Copy Caption to Clipboard
-                </button>
-            </div>
-
         </div>
         
         <div class="p-4 border-t border-gray-200 bg-white space-y-3 sticky bottom-0 z-20 md:static">
-            <!-- Share Button Group -->
-            <div class="flex gap-2">
-                <button id="shareBtn" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-2 rounded-lg shadow transition-colors flex items-center justify-center gap-1 text-sm">
-                    <i class="fas fa-share-from-square"></i> Share to Apps
-                </button>
-                <button id="downloadBtn" class="flex-1 bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-2 rounded-lg shadow transition-colors flex items-center justify-center gap-1 text-sm">
-                    <i class="fas fa-download"></i> Download Image
-                </button>
-            </div>
+            <button id="downloadBtn" class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg shadow transition-colors flex items-center justify-center gap-2">
+                <i class="fas fa-download"></i> Download Image
+            </button>
             
             <button id="saveToolBtn" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2 px-4 rounded-lg border border-slate-300 transition-colors flex items-center justify-center gap-2">
                 <i class="fas fa-save"></i> Save & Download Tool
@@ -592,9 +420,6 @@
         const saveModal = document.getElementById('saveModal');
         const finalImage = document.getElementById('finalImage');
         const closeModalBtn = document.getElementById('closeModalBtn');
-        const helpModal = document.getElementById('helpModal');
-        const helpBtn = document.getElementById('helpBtn');
-        const closeHelpBtn = document.getElementById('closeHelpBtn');
         
         // --- BASE64 PLACEHOLDERS (No Internet Required) ---
         const DATA_URI_GRAY = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNjYmQ1ZTEiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9ImFyaWFsIiBmb250LXNpemU9IjMwIiBmaWxsPSIjZmZmIiBkeT0iLjNlbSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UGhvdG88L3RleHQ+PC9zdmc+';
@@ -613,9 +438,6 @@
             agentTitle: document.getElementById('agentTitle').value,
             agentContact: document.getElementById('agentContact').value,
             companyNmls: document.getElementById('companyNmls').value,
-            socialInsta: document.getElementById('socialInsta').value,
-            socialFb: document.getElementById('socialFb').value,
-            socialLi: document.getElementById('socialLi').value,
             statusText: document.getElementById('statusText').value,
             borrowerStory: document.getElementById('borrowerStory').value,
             partnerEnabled: true,
@@ -639,13 +461,6 @@
             sc1Label: 'Conventional', sc1Down: 20, sc1Rate: 6.5,
             sc2Label: 'FHA', sc2Down: 3.5, sc2Rate: 5.99,
             calcDisclaimer: document.getElementById('calcDisclaimer').value,
-            socialCaption: '', // for posting
-            
-            // New Editable Titles
-            storyTitle: document.getElementById('storyTitle').value,
-            partnerBoxTitle: document.getElementById('partnerBoxTitle').value,
-            propertyTitle: document.getElementById('propertyTitle').value,
-            ohBoxTitle: document.getElementById('ohBoxTitle').value,
             
             images: { agent: null, main: null, partner: null, partnerLogo: null, logo: null }
         };
@@ -813,7 +628,6 @@
             const W = targetW;
             const H = targetH;
             const isOpenHouse = state.template === 'openhouse';
-            const isRefi = state.template === 'refinance';
 
             // --- HEADER ---
             let bannerY = 0;
@@ -821,7 +635,7 @@
             let mainImgH = 0;
 
             if (isFlyer) {
-                // ... (Flyer code remains same) ...
+                // FLYER HEADER (Logos top L/R, Title Center)
                 const headerH = 180;
                 
                 // Partner Logo
@@ -860,10 +674,11 @@
                 else { ctx.fillStyle = "#cbd5e1"; ctx.fillRect(60, mainImgY, W - 120, mainImgH); }
                 ctx.restore();
 
-                // Property Details
+                // Property Details (Address & Desc)
                 ctx.textAlign = "left";
                 const contentY = mainImgY + mainImgH + 50;
                 
+                // Icon + Address
                 ctx.font = "30px FontAwesome";
                 ctx.fillStyle = "#ea580c";
                 ctx.fillText("\uf3c5", 60, contentY);
@@ -872,6 +687,7 @@
                 ctx.fillStyle = "#1e293b";
                 ctx.fillText(state.ohAddress, 110, contentY);
                 
+                // Time
                 ctx.font = "30px FontAwesome";
                 ctx.fillStyle = "#ea580c";
                 ctx.fillText("\uf017", 60, contentY + 50);
@@ -881,19 +697,22 @@
                 const timeStr = `${state.ohDate}  |  ${state.ohTime}`;
                 ctx.fillText(timeStr, 110, contentY + 50);
 
+                // Description Paragraph
                 ctx.font = "26px Roboto";
                 ctx.fillStyle = "#475569";
                 wrapText(ctx, state.propertyDesc, 60, contentY + 110, W - 120, 26, "Roboto", 4);
 
-                // --- FINANCING TABLE ---
+                // --- FINANCING TABLE (CALCULATOR) ---
                 const calcY = contentY + 280;
                 const calcBoxH = 420;
                 
+                // Background Box
                 ctx.fillStyle = "#FFFFFF";
                 ctx.shadowColor = "rgba(0,0,0,0.05)"; ctx.shadowBlur = 10;
                 ctx.roundRect(60, calcY, W - 120, calcBoxH, 15);
                 ctx.fill(); ctx.shadowBlur = 0;
                 
+                // Header Bar
                 ctx.fillStyle = state.primaryColor;
                 ctx.roundRect(60, calcY, W - 120, 60, {tl:15, tr:15, bl:0, br:0});
                 ctx.fill();
@@ -903,9 +722,11 @@
                 ctx.textAlign = "center";
                 ctx.fillText(`FINANCING OPTIONS  |  LIST PRICE: ${formatCurrency(state.calcPrice)}`, W/2, calcY + 40);
 
+                // CALCULATIONS
                 const res1 = calculateMortgage(state.calcPrice, state.sc1Down, state.sc1Rate, state.calcTax, state.calcIns, state.calcHoa);
                 const res2 = calculateMortgage(state.calcPrice, state.sc2Down, state.sc2Rate, state.calcTax, state.calcIns, state.calcHoa);
 
+                // TABLE DRAWING - ADJUSTED SPACING
                 const col1X = 90;
                 const col2X = 720;
                 const col3X = 1020;
@@ -923,10 +744,10 @@
                 ctx.fillStyle = state.primaryColor;
                 ctx.fillText("EST. PAYMENT", col1X, rowStart + rowH*4 + 10);
 
-                // COL 2
+                // COL 2 (SCENARIO 1)
                 ctx.textAlign = "center";
                 ctx.fillStyle = state.primaryColor; ctx.font = "800 26px Montserrat";
-                ctx.fillText(state.sc1Label, col2X, rowStart - 35); 
+                ctx.fillText(state.sc1Label, col2X, rowStart - 35); // Header
 
                 ctx.fillStyle = "#334155"; ctx.font = "500 24px Roboto";
                 ctx.fillText(`${state.sc1Down}% (${formatCurrency(res1.downAmt)})`, col2X, rowStart);
@@ -934,12 +755,12 @@
                 ctx.fillText(formatCurrency(res1.pi), col2X, rowStart + rowH*2);
                 ctx.fillText(formatCurrency(res1.taxes + res1.ins + res1.hoa), col2X, rowStart + rowH*3);
                 
-                ctx.font = "900 32px Montserrat"; ctx.fillStyle = "#15803d"; 
+                ctx.font = "900 32px Montserrat"; ctx.fillStyle = "#15803d"; // Green
                 ctx.fillText(formatCurrency(res1.total), col2X, rowStart + rowH*4 + 10);
 
-                // COL 3
+                // COL 3 (SCENARIO 2)
                 ctx.fillStyle = state.primaryColor; ctx.font = "800 26px Montserrat";
-                ctx.fillText(state.sc2Label, col3X, rowStart - 35); 
+                ctx.fillText(state.sc2Label, col3X, rowStart - 35); // Header
 
                 ctx.fillStyle = "#334155"; ctx.font = "500 24px Roboto";
                 ctx.fillText(`${state.sc2Down}% (${formatCurrency(res2.downAmt)})`, col3X, rowStart);
@@ -950,10 +771,90 @@
                 ctx.font = "900 32px Montserrat"; ctx.fillStyle = "#15803d"; 
                 ctx.fillText(formatCurrency(res2.total), col3X, rowStart + rowH*4 + 10);
 
+                // Disclaimer
                 ctx.font = "italic 16px Roboto";
                 ctx.fillStyle = "#94a3b8";
                 ctx.textAlign = "center";
                 wrapText(ctx, state.calcDisclaimer, W/2, calcY + calcBoxH - 30, W - 140, 16, "italic Roboto", 2);
+            
+            } else if (state.template === 'announcement') {
+                // --- MARKET UPDATE / NEWS LAYOUT (TEXT ONLY) ---
+                
+                // 1. Top Bar (Category)
+                const headerHeight = 160;
+                ctx.fillStyle = state.primaryColor;
+                ctx.fillRect(0, 0, W, headerHeight);
+                
+                // Header Text (Centered or Large)
+                ctx.fillStyle = "#FFFFFF";
+                ctx.textAlign = "center";
+                ctx.font = "900 60px Montserrat";
+                ctx.fillText(state.statusText.toUpperCase(), W/2, 100);
+
+                // 2. Headline (Below Header)
+                ctx.fillStyle = "#1e293b";
+                ctx.textAlign = "left";
+                let hlFont = 65;
+                ctx.font = `800 ${hlFont}px Montserrat`;
+                // Wrap headline if needed
+                const headlineY = headerHeight + 90;
+                wrapText(ctx, state.refiTitle, 60, headlineY, W - 120, hlFont, "Montserrat", 2);
+                
+                // 3. Body Text
+                // Calculate where headline ended roughly
+                const headlineLines = Math.ceil(ctx.measureText(state.refiTitle).width / (W-120)); 
+                // Simple approx
+                let cursorY = headlineY + (headlineLines > 1 ? 90 : 50) + 40;
+                
+                ctx.fillStyle = "#334155";
+                ctx.textAlign = "left";
+                // Max lines to ensure it doesn't hit the popped-up headshot
+                wrapText(ctx, state.borrowerStory, 60, cursorY, W - 120, 34, "Roboto", 12);
+
+                // 4. FOOTER (Standard Style - Big Headshot)
+                const footerY = H - 140; // Taller footer for news
+                ctx.fillStyle = state.secondaryColor;
+                ctx.fillRect(0, footerY, W, 140);
+                
+                // Headshot (Pop-up)
+                const headshotSize = 220; 
+                const headshotX = 60; 
+                const headshotY = footerY - 80; 
+                
+                // Draw Headshot Shadow/Border
+                ctx.save(); 
+                ctx.beginPath(); ctx.arc(headshotX + (headshotSize/2), headshotY + (headshotSize/2), headshotSize/2, 0, Math.PI * 2);
+                ctx.lineWidth = 10; ctx.strokeStyle = "#FFFFFF"; ctx.stroke(); 
+                ctx.clip();
+                if (state.images.agent) drawImageCover(ctx, state.images.agent, headshotX, headshotY, headshotSize, headshotSize);
+                else { ctx.fillStyle = "#94a3b8"; ctx.fillRect(headshotX, headshotY, headshotSize, headshotSize); }
+                ctx.restore();
+
+                // Agent Info (Right of headshot)
+                const infoX = 320;
+                ctx.fillStyle = "#FFFFFF"; 
+                ctx.textAlign = "left";
+                ctx.font = "700 36px Montserrat"; 
+                ctx.fillText(state.agentName, infoX, footerY + 60);
+                
+                ctx.font = "400 28px Roboto";
+                ctx.fillText(state.agentContact, infoX, footerY + 100);
+                
+                // Company Logo (Bottom Right)
+                if (state.images.logo) {
+                    const lImg = state.images.logo;
+                    const r = Math.min(250/lImg.width, 100/lImg.height);
+                    const logoX = W - 50 - (lImg.width*r);
+                    const logoY = footerY + (70 - (lImg.height*r)/2);
+                    ctx.drawImage(lImg, logoX, logoY, lImg.width*r, lImg.height*r);
+                } else {
+                     // Fallback Compliance Text
+                    ctx.textAlign = "right";
+                    ctx.font = "300 18px Roboto";
+                    ctx.fillStyle = "rgba(255,255,255,0.8)";
+                    ctx.fillText(`${state.companyNmls}`, W - 50, footerY + 70);
+                    ctx.fillText("Equal Housing Lender", W - 50, footerY + 95);
+                }
 
             } else {
                 // --- STANDARD SOCIAL LAYOUT (SQUARE) ---
@@ -962,57 +863,12 @@
                 const bannerH = 90;
                 bannerY = mainImgY + mainImgH - (bannerH / 2); 
 
-                if (isRefi) {
-                    // --- NEW REFINANCE REVIEW LAYOUT ---
-                    // Draw Review Card Background instead of Image
-                    ctx.save();
-                    ctx.roundRect(40, mainImgY, 1000, mainImgH, 20);
-                    ctx.clip();
-                    
-                    // Subtle background gradient
-                    const rGrad = ctx.createLinearGradient(40, mainImgY, 40, mainImgY+mainImgH);
-                    rGrad.addColorStop(0, "#f1f5f9");
-                    rGrad.addColorStop(1, "#e2e8f0");
-                    ctx.fillStyle = rGrad;
-                    ctx.fillRect(40, mainImgY, 1000, mainImgH);
-                    
-                    // Draw 5 Stars
-                    ctx.font = "60px FontAwesome";
-                    ctx.fillStyle = "#eab308"; // Gold
-                    const starW = ctx.measureText("\uf005").width;
-                    const starsW = (starW * 5) + 40; // spacing
-                    let starX = 540 - (starsW/2);
-                    for(let i=0; i<5; i++) {
-                        ctx.fillText("\uf005", starX, mainImgY + 100);
-                        starX += (starW + 10);
-                    }
-
-                    // Draw Review Text (Large)
-                    ctx.font = "italic 700 40px Montserrat";
-                    ctx.fillStyle = "#334155";
-                    ctx.textAlign = "center";
-                    let displayText = state.borrowerStory;
-                    if(displayText.length < 5) displayText = "Five Star Service! We saved hundreds on our monthly payment.";
-                    
-                    // Center vertically in the remaining space
-                    wrapText(ctx, `"${displayText}"`, 540, mainImgY + 180, 900, 40, "italic 700 Montserrat", 4);
-                    
-                    // Verified Badge
-                    ctx.font = "30px Roboto";
-                    ctx.fillStyle = "#64748b";
-                    ctx.fillText("- Verified Client", 540, mainImgY + mainImgH - 40);
-
-                    ctx.restore();
-
-                } else {
-                    // Standard Image Draw
-                    ctx.save();
-                    ctx.roundRect(40, mainImgY, 1000, mainImgH, 20); 
-                    ctx.clip();
-                    if (state.images.main) drawImageCover(ctx, state.images.main, 40, mainImgY, 1000, mainImgH);
-                    else { ctx.fillStyle = "#cbd5e1"; ctx.fillRect(40, mainImgY, 1000, mainImgH); ctx.fillStyle = "#64748b"; ctx.textAlign = "center"; ctx.fillText("Upload Photo", 540, mainImgY + (mainImgH/2)); }
-                    ctx.restore();
-                }
+                ctx.save();
+                ctx.roundRect(40, mainImgY, 1000, mainImgH, 20); 
+                ctx.clip();
+                if (state.images.main) drawImageCover(ctx, state.images.main, 40, mainImgY, 1000, mainImgH);
+                else { ctx.fillStyle = "#cbd5e1"; ctx.fillRect(40, mainImgY, 1000, mainImgH); ctx.fillStyle = "#64748b"; ctx.textAlign = "center"; ctx.fillText("Upload Photo", 540, mainImgY + (mainImgH/2)); }
+                ctx.restore();
 
                 // HEADER LOGIC (Square)
                 if (isOpenHouse) {
@@ -1055,15 +911,10 @@
                 ctx.fillStyle = "#FFFFFF"; ctx.shadowColor = "rgba(0,0,0,0.05)"; ctx.shadowBlur = 10;
                 ctx.roundRect(40, contentStart, 480, 300, 15); ctx.fill(); ctx.shadowBlur = 0;
                 ctx.fillStyle = state.primaryColor; ctx.textAlign = "left"; ctx.font = "700 28px Montserrat";
-                let b1T = state.storyTitle; let b1Txt = state.borrowerStory;
-                if (state.template === 'openhouse') { b1T = state.propertyTitle; b1Txt = state.propertyDesc; }
-                else if (state.template === 'refinance') { 
-                    // For Refi, we used the main image area for the review, 
-                    // so we repurpose this box for a "Call to Action" or Stats
-                    b1T = "THE RESULTS"; 
-                    b1Txt = state.refiDetails || "Contact us today for a free rate review.";
-                }
-                ctx.fillText(b1T.toUpperCase(), 70, contentStart + 45);
+                let b1T = "BORROWER SUCCESS"; let b1Txt = state.borrowerStory;
+                if (state.template === 'openhouse') { b1T = "PROPERTY DETAILS"; b1Txt = state.propertyDesc; }
+                else if (state.template === 'refinance') { b1T = "FINANCIAL GOAL"; b1Txt = state.borrowerStory; }
+                ctx.fillText(b1T, 70, contentStart + 45);
                 ctx.fillStyle = "#334155"; wrapText(ctx, b1Txt, 70, contentStart + 85, 420, 24, "Roboto", 6);
 
                 ctx.fillStyle = "#FFFFFF"; ctx.shadowColor = "rgba(0,0,0,0.05)"; ctx.shadowBlur = 10;
@@ -1072,7 +923,7 @@
                 // Right Box Content
                 if (state.template === 'purchase') {
                     ctx.fillStyle = "#f59e0b"; ctx.font = "24px FontAwesome"; ctx.fillText("\uf005", 590, contentStart + 45); 
-                    ctx.fillStyle = state.primaryColor; ctx.font = "700 28px Montserrat"; ctx.fillText(state.partnerBoxTitle.toUpperCase(), 630, contentStart + 45);
+                    ctx.fillStyle = state.primaryColor; ctx.font = "700 28px Montserrat"; ctx.fillText("PARTNER SHOUTOUT", 630, contentStart + 45);
                     if (state.partnerEnabled) {
                         const pX = 600; const pY = contentStart + 70; const pSize = 120;
                         ctx.save(); ctx.beginPath(); ctx.arc(pX + (pSize/2), pY + (pSize/2), pSize/2, 0, Math.PI * 2); ctx.clip();
@@ -1084,13 +935,12 @@
                         ctx.fillStyle = "#334155"; wrapText(ctx, `"${state.partnerShoutout}"`, 590, pY + pSize + 25, 420, 22, "italic Roboto", 3);
                     } else { ctx.fillStyle = "#94a3b8"; ctx.font = "italic 24px Roboto"; ctx.fillText("(Partner display disabled)", 630, contentStart + 150); }
                 } else if (state.template === 'refinance') {
-                    // Icon removed per request
-                    ctx.fillStyle = state.primaryColor; ctx.font = "700 28px Montserrat"; ctx.fillText(state.refiTitle.toUpperCase(), 590, contentStart + 45);
-                    // For Refi, this is the second box. We can put contact info or just the same details
-                    ctx.fillStyle = "#334155"; wrapText(ctx, "Ready to see how much you could save? Reach out today for a free total cost analysis!", 590, contentStart + 100, 420, 32, "Roboto", 5);
+                    ctx.fillStyle = "#16a34a"; ctx.font = "24px FontAwesome"; ctx.fillText("\uf3d1", 590, contentStart + 45); 
+                    ctx.fillStyle = state.primaryColor; ctx.font = "700 28px Montserrat"; ctx.fillText(state.refiTitle.toUpperCase(), 630, contentStart + 45);
+                    ctx.fillStyle = "#334155"; wrapText(ctx, state.refiDetails, 590, contentStart + 100, 420, 32, "Roboto", 5);
                 } else if (state.template === 'openhouse') {
                     ctx.fillStyle = "#ea580c"; ctx.font = "24px FontAwesome"; ctx.fillText("\uf073", 590, contentStart + 45); 
-                    ctx.fillStyle = state.primaryColor; ctx.font = "700 28px Montserrat"; ctx.fillText(state.ohBoxTitle.toUpperCase(), 630, contentStart + 45);
+                    ctx.fillStyle = state.primaryColor; ctx.font = "700 28px Montserrat"; ctx.fillText("WHEN & WHERE", 630, contentStart + 45);
                     const sY = contentStart + 100;
                     ctx.font = "24px FontAwesome"; ctx.fillStyle = state.secondaryColor; ctx.fillText("\uf017", 590, sY);
                     ctx.fillStyle = "#1e293b"; ctx.font = "700 28px Montserrat"; ctx.fillText(state.ohDate, 630, sY);
@@ -1101,95 +951,74 @@
             } // End standard social content block
 
             // --- FOOTER (Common) ---
-            const footerY = H - 120;
-            ctx.fillStyle = state.primaryColor;
-            ctx.fillRect(0, footerY, W, 120);
+            // Only draw common footer if NOT announcement, because announcement handles its own
+            if (state.template !== 'announcement') {
+                const footerY = H - 120;
+                ctx.fillStyle = state.primaryColor;
+                ctx.fillRect(0, footerY, W, 120);
 
-            if (isFlyer || isOpenHouse) {
-                // ... (Footer code remains same) ...
-                // Partner + Agent Footer (Shared Logic)
-                const headshotSize = 100;
-                const pHeadshotX = 40;
-                const pHeadshotY = footerY + 10;
-                
-                // Partner Headshot
-                ctx.save(); ctx.beginPath(); ctx.arc(pHeadshotX + (headshotSize/2), pHeadshotY + (headshotSize/2), headshotSize/2, 0, Math.PI * 2);
-                ctx.lineWidth = 4; ctx.strokeStyle = "#FFFFFF"; ctx.stroke(); ctx.clip();
-                if (state.images.partner) drawImageCover(ctx, state.images.partner, pHeadshotX, pHeadshotY, headshotSize, headshotSize);
-                else { ctx.fillStyle = "#94a3b8"; ctx.fillRect(pHeadshotX, pHeadshotY, headshotSize, headshotSize); }
-                ctx.restore();
-
-                // Partner Text
-                ctx.fillStyle = "#FFFFFF"; ctx.textAlign = "left";
-                ctx.font = "700 24px Montserrat"; ctx.fillText(state.partnerName, pHeadshotX + 120, footerY + 40);
-                ctx.font = "400 18px Roboto"; ctx.fillText(state.partnerTitle, pHeadshotX + 120, footerY + 65);
-                ctx.font = "300 16px Roboto"; ctx.fillText(state.partnerContact, pHeadshotX + 120, footerY + 85);
-
-                // Divider
-                ctx.beginPath(); ctx.moveTo(W/2, footerY + 10); ctx.lineTo(W/2, footerY + 110);
-                ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.lineWidth = 1; ctx.stroke();
-
-                // Agent Headshot
-                const aHeadshotX = (W/2) + 40;
-                ctx.save(); ctx.beginPath(); ctx.arc(aHeadshotX + (headshotSize/2), pHeadshotY + (headshotSize/2), headshotSize/2, 0, Math.PI * 2);
-                ctx.lineWidth = 4; ctx.strokeStyle = "#FFFFFF"; ctx.stroke(); ctx.clip();
-                if (state.images.agent) drawImageCover(ctx, state.images.agent, aHeadshotX, pHeadshotY, headshotSize, headshotSize);
-                else { ctx.fillStyle = "#94a3b8"; ctx.fillRect(aHeadshotX, pHeadshotY, headshotSize, headshotSize); }
-                ctx.restore();
-
-                // Agent Text
-                ctx.fillStyle = "#FFFFFF"; ctx.textAlign = "left";
-                ctx.font = "700 24px Montserrat"; ctx.fillText(state.agentName, aHeadshotX + 120, footerY + 40);
-                ctx.font = "400 18px Roboto"; ctx.fillText(state.agentTitle, aHeadshotX + 120, footerY + 65);
-                ctx.font = "300 16px Roboto"; ctx.fillText(state.agentContact, aHeadshotX + 120, footerY + 85);
-
-                // Compliance Line
-                const compY = footerY + 110;
-                const compText = `${state.companyNmls} | Equal Housing Lender`;
-                ctx.font = "14px FontAwesome"; ctx.fillStyle = "rgba(255,255,255,0.7)";
-                ctx.fillText("\uf015", (W/2) + 40 + 120, compY); 
-                ctx.font = "300 12px Roboto";
-                ctx.fillText(compText, (W/2) + 40 + 140, compY);
-
-                // --- SOCIAL HANDLES (Flyer Only) ---
-                if (isFlyer && (state.socialInsta || state.socialFb || state.socialLi)) {
-                    ctx.textAlign = "right"; ctx.fillStyle = "#FFFFFF"; ctx.font = "14px Roboto";
-                    const sY = footerY + 110;
-                    let sX = W - 40;
+                if (isFlyer || isOpenHouse) {
+                    // Partner + Agent Footer (Shared Logic)
+                    const headshotSize = 100;
+                    const pHeadshotX = 40;
+                    const pHeadshotY = footerY + 10;
                     
-                    if(state.socialFb) {
-                        ctx.fillText(state.socialFb, sX, sY); sX -= (ctx.measureText(state.socialFb).width + 10);
-                        ctx.font = "16px FontAwesome"; ctx.fillText("\uf09a", sX, sY); sX -= 30; // FB Icon
-                        ctx.font = "14px Roboto";
-                    }
-                    if(state.socialInsta) {
-                        ctx.fillText(state.socialInsta, sX, sY); sX -= (ctx.measureText(state.socialInsta).width + 10);
-                        ctx.font = "16px FontAwesome"; ctx.fillText("\uf16d", sX, sY); sX -= 30; // IG Icon
-                        ctx.font = "14px Roboto";
-                    }
-                    if(state.socialLi) {
-                        ctx.fillText(state.socialLi, sX, sY); sX -= (ctx.measureText(state.socialLi).width + 10);
-                        ctx.font = "16px FontAwesome"; ctx.fillText("\uf08c", sX, sY); // LI Icon
-                        ctx.font = "14px Roboto";
-                    }
+                    // Partner Headshot
+                    ctx.save(); ctx.beginPath(); ctx.arc(pHeadshotX + (headshotSize/2), pHeadshotY + (headshotSize/2), headshotSize/2, 0, Math.PI * 2);
+                    ctx.lineWidth = 4; ctx.strokeStyle = "#FFFFFF"; ctx.stroke(); ctx.clip();
+                    if (state.images.partner) drawImageCover(ctx, state.images.partner, pHeadshotX, pHeadshotY, headshotSize, headshotSize);
+                    else { ctx.fillStyle = "#94a3b8"; ctx.fillRect(pHeadshotX, pHeadshotY, headshotSize, headshotSize); }
+                    ctx.restore();
+
+                    // Partner Text
+                    ctx.fillStyle = "#FFFFFF"; ctx.textAlign = "left";
+                    ctx.font = "700 24px Montserrat"; ctx.fillText(state.partnerName, pHeadshotX + 120, footerY + 40);
+                    ctx.font = "400 18px Roboto"; ctx.fillText(state.partnerTitle, pHeadshotX + 120, footerY + 65);
+                    ctx.font = "300 16px Roboto"; ctx.fillText(state.partnerContact, pHeadshotX + 120, footerY + 85);
+
+                    // Divider
+                    ctx.beginPath(); ctx.moveTo(W/2, footerY + 10); ctx.lineTo(W/2, footerY + 110);
+                    ctx.strokeStyle = "rgba(255,255,255,0.3)"; ctx.lineWidth = 1; ctx.stroke();
+
+                    // Agent Headshot
+                    const aHeadshotX = (W/2) + 40;
+                    ctx.save(); ctx.beginPath(); ctx.arc(aHeadshotX + (headshotSize/2), pHeadshotY + (headshotSize/2), headshotSize/2, 0, Math.PI * 2);
+                    ctx.lineWidth = 4; ctx.strokeStyle = "#FFFFFF"; ctx.stroke(); ctx.clip();
+                    if (state.images.agent) drawImageCover(ctx, state.images.agent, aHeadshotX, pHeadshotY, headshotSize, headshotSize);
+                    else { ctx.fillStyle = "#94a3b8"; ctx.fillRect(aHeadshotX, pHeadshotY, headshotSize, headshotSize); }
+                    ctx.restore();
+
+                    // Agent Text
+                    ctx.fillStyle = "#FFFFFF"; ctx.textAlign = "left";
+                    ctx.font = "700 24px Montserrat"; ctx.fillText(state.agentName, aHeadshotX + 120, footerY + 40);
+                    ctx.font = "400 18px Roboto"; ctx.fillText(state.agentTitle, aHeadshotX + 120, footerY + 65);
+                    ctx.font = "300 16px Roboto"; ctx.fillText(state.agentContact, aHeadshotX + 120, footerY + 85);
+
+                    // Compliance Line
+                    const compY = footerY + 110;
+                    const compText = `${state.companyNmls} | Equal Housing Lender`;
+                    ctx.font = "14px FontAwesome"; ctx.fillStyle = "rgba(255,255,255,0.7)";
+                    ctx.fillText("\uf015", (W/2) + 40 + 120, compY); 
+                    ctx.font = "300 12px Roboto";
+                    ctx.fillText(compText, (W/2) + 40 + 140, compY);
+
+                } else {
+                    // Standard Solo Agent Footer
+                    const headshotSize = 200; const headshotX = 60; const headshotY = footerY - 80; 
+                    ctx.save(); ctx.beginPath(); ctx.arc(headshotX + (headshotSize/2), headshotY + (headshotSize/2), headshotSize/2, 0, Math.PI * 2);
+                    ctx.lineWidth = 8; ctx.strokeStyle = "#FFFFFF"; ctx.stroke(); ctx.clip();
+                    if (state.images.agent) drawImageCover(ctx, state.images.agent, headshotX, headshotY, headshotSize, headshotSize);
+                    else { ctx.fillStyle = "#94a3b8"; ctx.fillRect(headshotX, headshotY, headshotSize, headshotSize); }
+                    ctx.restore();
+
+                    ctx.fillStyle = "#FFFFFF"; ctx.textAlign = "left";
+                    ctx.font = "500 32px Montserrat"; ctx.fillText("Ready for your seamless journey?", 300, footerY + 50);
+                    ctx.font = "300 24px Roboto"; ctx.fillText(state.agentContact, 300, footerY + 85);
+                    const iconX = 300; const iconY = footerY + 108;
+                    ctx.font = "18px FontAwesome"; ctx.fillStyle = "#FFFFFF"; ctx.fillText("\uf015", iconX, iconY);
+                    ctx.font = "300 15px Roboto"; ctx.fillStyle = "rgba(255,255,255,0.9)"; ctx.fillText(`Equal Housing Lender  |  ${state.companyNmls}`, iconX + 30, iconY);
+                    ctx.fillStyle = "#FFFFFF"; ctx.textAlign = "right"; ctx.font = "40px FontAwesome"; ctx.fillText("\uf095", 1020, footerY + 75); 
                 }
-
-            } else {
-                // Standard Solo Agent Footer
-                const headshotSize = 200; const headshotX = 60; const headshotY = footerY - 80; 
-                ctx.save(); ctx.beginPath(); ctx.arc(headshotX + (headshotSize/2), headshotY + (headshotSize/2), headshotSize/2, 0, Math.PI * 2);
-                ctx.lineWidth = 8; ctx.strokeStyle = "#FFFFFF"; ctx.stroke(); ctx.clip();
-                if (state.images.agent) drawImageCover(ctx, state.images.agent, headshotX, headshotY, headshotSize, headshotSize);
-                else { ctx.fillStyle = "#94a3b8"; ctx.fillRect(headshotX, headshotY, headshotSize, headshotSize); }
-                ctx.restore();
-
-                ctx.fillStyle = "#FFFFFF"; ctx.textAlign = "left";
-                ctx.font = "500 32px Montserrat"; ctx.fillText("Ready for your seamless journey?", 300, footerY + 44);
-                ctx.font = "300 24px Roboto"; ctx.fillText(state.agentContact, 300, footerY + 74);
-                const iconX = 300; const iconY = footerY + 98;
-                ctx.font = "18px FontAwesome"; ctx.fillStyle = "#FFFFFF"; ctx.fillText("\uf015", iconX, iconY);
-                ctx.font = "300 15px Roboto"; ctx.fillStyle = "rgba(255,255,255,0.9)"; ctx.fillText(`Equal Housing Lender  |  ${state.companyNmls}`, iconX + 30, iconY);
-                ctx.fillStyle = "#FFFFFF"; ctx.textAlign = "right"; ctx.font = "40px FontAwesome"; ctx.fillText("\uf095", 1020, footerY + 75); 
             }
         }
 
@@ -1211,21 +1040,6 @@
             });
         });
 
-        const textInputs = ['agentName', 'agentTitle', 'agentContact', 'companyNmls', 'socialInsta', 'socialFb', 'socialLi', 'statusText', 'borrowerStory', 'partnerName', 'partnerTitle', 'partnerContact', 'partnerShoutout', 'refiTitle', 'refiDetails', 'propertyDesc', 'ohDate', 'ohTime', 'ohAddress', 'storyTitle', 'partnerBoxTitle', 'propertyTitle', 'ohBoxTitle'];
-        textInputs.forEach(id => {
-            document.getElementById(id).addEventListener('input', (e) => {
-                state[id] = e.target.value;
-                drawPost();
-            });
-            if(['agentName', 'agentTitle', 'agentContact', 'companyNmls', 'socialInsta', 'socialFb', 'socialLi'].includes(id)) {
-                document.getElementById(id).addEventListener('blur', saveProfile);
-            }
-        });
-
-        document.getElementById('socialCaption').addEventListener('input', (e) => {
-            state.socialCaption = e.target.value;
-        });
-
         function updateUIForTemplate() {
             const t = state.template;
             
@@ -1235,11 +1049,12 @@
             const storyGroup = document.getElementById('storyInputGroup');
             const ohDescGroup = document.getElementById('openHouseDescGroup');
             const calcInputs = document.getElementById('calcInputs');
-            const storyLabel = document.getElementById('storyLabel');
-            const mainPhotoGroup = document.getElementById('mainPhotoGroup');
             
-            // Editable Title Inputs
-            const storyTitleInput = document.getElementById('storyTitle');
+            const storyLabel = document.getElementById('storyLabel');
+            const statusLabel = document.getElementById('statusLabel');
+            const mainPhotoLabel = document.getElementById('mainPhotoLabel');
+            const refiGroupLabel = document.getElementById('refiGroupLabel');
+            const mainPhotoContainer = document.getElementById('mainPhotoContainer');
 
             purchaseInputs.classList.add('hidden-group');
             refiInputs.classList.add('hidden-group');
@@ -1247,36 +1062,30 @@
             storyGroup.classList.add('hidden-group');
             ohDescGroup.classList.add('hidden-group');
             calcInputs.classList.add('hidden-group');
-            mainPhotoGroup.classList.remove('hidden-group');
+
+            // Defaults
+            statusLabel.innerText = "Status Banner";
+            mainPhotoLabel.innerText = "Main Photo (Clients/House)";
+            refiGroupLabel.innerText = "Savings Breakdown";
+            mainPhotoContainer.classList.remove('hidden');
 
             if (t === 'purchase') {
                 purchaseInputs.classList.remove('hidden-group');
                 storyGroup.classList.remove('hidden-group');
                 storyLabel.innerText = "Borrower Story";
-                
-                // Set Default Title for Purchase
-                storyTitleInput.value = "BORROWER SUCCESS";
-                state.storyTitle = "BORROWER SUCCESS";
-
-                if (['REFINANCED!', 'OPEN HOUSE'].includes(state.statusText)) { state.statusText = "JUST CLOSED!"; document.getElementById('statusText').value = "JUST CLOSED!"; }
+                if (['REFINANCED!', 'OPEN HOUSE', 'MARKET UPDATE'].includes(state.statusText)) { state.statusText = "JUST CLOSED!"; document.getElementById('statusText').value = "JUST CLOSED!"; }
             } 
             else if (t === 'refinance') {
                 refiInputs.classList.remove('hidden-group');
                 storyGroup.classList.remove('hidden-group');
-                storyLabel.innerText = "Client Review / Quote";
-                mainPhotoGroup.classList.add('hidden-group'); // Hide photo for refi
-                
-                // Set Default Title for Refinance
-                storyTitleInput.value = "FIVE STAR SERVICE";
-                state.storyTitle = "FIVE STAR SERVICE";
-
-                if (['JUST CLOSED!', 'OPEN HOUSE'].includes(state.statusText)) { state.statusText = "REFINANCED!"; document.getElementById('statusText').value = "REFINANCED!"; }
+                storyLabel.innerText = "Financial Goal";
+                if (['JUST CLOSED!', 'OPEN HOUSE', 'MARKET UPDATE'].includes(state.statusText)) { state.statusText = "REFINANCED!"; document.getElementById('statusText').value = "REFINANCED!"; }
             } 
             else if (t === 'openhouse') {
                 purchaseInputs.classList.remove('hidden-group');
                 ohInputs.classList.remove('hidden-group');
                 ohDescGroup.classList.remove('hidden-group');
-                if (['JUST CLOSED!', 'REFINANCED!'].includes(state.statusText)) { state.statusText = "OPEN HOUSE"; document.getElementById('statusText').value = "OPEN HOUSE"; }
+                if (['JUST CLOSED!', 'REFINANCED!', 'MARKET UPDATE'].includes(state.statusText)) { state.statusText = "OPEN HOUSE"; document.getElementById('statusText').value = "OPEN HOUSE"; }
             }
             else if (t === 'flyer') {
                 purchaseInputs.classList.remove('hidden-group');
@@ -1284,103 +1093,39 @@
                 ohDescGroup.classList.remove('hidden-group');
                 calcInputs.classList.remove('hidden-group'); // Show Calculator
                 // Flyer doesn't use borrower story, uses Calc instead
-                if (['JUST CLOSED!', 'REFINANCED!'].includes(state.statusText)) { state.statusText = "OPEN HOUSE"; document.getElementById('statusText').value = "OPEN HOUSE"; }
+                if (['JUST CLOSED!', 'REFINANCED!', 'MARKET UPDATE'].includes(state.statusText)) { state.statusText = "OPEN HOUSE"; document.getElementById('statusText').value = "OPEN HOUSE"; }
+            }
+            else if (t === 'announcement') {
+                // ANNOUNCEMENT MODE
+                storyGroup.classList.remove('hidden-group'); // For Body Text
+                refiInputs.classList.remove('hidden-group'); // For Headline
+                document.getElementById('refiDetails').classList.add('hidden'); // Hide the small detail box in refi group
+                mainPhotoContainer.classList.add('hidden'); // HIDE MAIN PHOTO
+
+                // Reuse Refi Title for Headline
+                refiGroupLabel.innerText = "Headline";
+                document.getElementById('refiTitle').placeholder = "Main Headline (e.g. Rates Drop)";
+                if(state.refiTitle === "MONTHLY SAVINGS") {
+                    state.refiTitle = "CPI Data Released"; 
+                    document.getElementById('refiTitle').value = "CPI Data Released";
+                }
+
+                // Reuse Status for Category
+                statusLabel.innerText = "Category Header";
+                if (['JUST CLOSED!', 'REFINANCED!', 'OPEN HOUSE'].includes(state.statusText)) { 
+                    state.statusText = "MARKET UPDATE"; 
+                    document.getElementById('statusText').value = "MARKET UPDATE"; 
+                }
+
+                // Reuse Story for Body
+                storyLabel.innerText = "Announcement Details";
+            }
+            
+            // Restore hidden refi details if not announcement
+            if(t !== 'announcement') {
+                document.getElementById('refiDetails').classList.remove('hidden');
             }
         }
-
-        // --- AI MAGIC REWRITE ---
-        document.getElementById('magicRewriteBtn').addEventListener('click', () => {
-            const rawText = document.getElementById('borrowerStory').value;
-            if(!rawText || rawText.length < 5) {
-                showToast("Please enter some bullets first!");
-                return;
-            }
-
-            // Simple "AI" Heuristic Templates
-            const phrases = rawText.split(/,|\n/).map(s => s.trim()).filter(s => s.length > 0);
-            
-            // Templates
-            const intros = [
-                "We are thrilled to share another success story!",
-                "Just crossed the finish line for another amazing client.",
-                "Another happy family is set up for success.",
-                "Big wins today for our clients!"
-            ];
-            
-            const connectors = [
-                "We were able to",
-                "The team successfully",
-                "We helped them"
-            ];
-
-            const closers = [
-                "It's what we do best.",
-                "Honored to be part of their journey.",
-                "Ready to do the same for you!",
-                "Another seamless closing in the books."
-            ];
-
-            // Build the story
-            let story = intros[Math.floor(Math.random() * intros.length)] + " ";
-            
-            if (phrases.length > 0) {
-                story += connectors[Math.floor(Math.random() * connectors.length)] + " ";
-                // Join phrases naturally
-                if (phrases.length === 1) {
-                    story += phrases[0] + ". ";
-                } else if (phrases.length === 2) {
-                    story += phrases[0] + " and " + phrases[1] + ". ";
-                } else {
-                    const last = phrases.pop();
-                    story += phrases.join(", ") + ", and " + last + ". ";
-                }
-            }
-            
-            story += closers[Math.floor(Math.random() * closers.length)];
-
-            document.getElementById('borrowerStory').value = story;
-            state.borrowerStory = story;
-            drawPost();
-            showToast("✨ Magic Rewrite Complete!");
-        });
-
-        // --- SOCIAL SHARE LOGIC (NEW) ---
-        document.getElementById('shareBtn').addEventListener('click', async () => {
-            if (!navigator.share) {
-                alert("Native sharing is not supported on this device/browser. Please use 'Download Image'.");
-                return;
-            }
-
-            // --- INSTAGRAM FIX: USE JPEG AND REMOVE TITLE ---
-            // Instagram share intents often fail if multiple items (title + file) are present
-            // or if the file format is PNG in certain versions.
-            // We force JPEG at 0.95 quality and ONLY send the files array.
-            
-            canvas.toBlob(async (blob) => {
-                const file = new File([blob], `post-${Date.now()}.jpg`, { type: "image/jpeg" });
-                
-                const shareData = {
-                    files: [file]
-                    // title: 'New Post' <-- REMOVED intentionally to fix Instagram error
-                };
-
-                try {
-                    await navigator.share(shareData);
-                    showToast("Shared successfully!");
-                } catch (err) {
-                    console.log("Share failed or canceled", err);
-                }
-            }, 'image/jpeg', 0.95); // Force JPEG format
-        });
-
-        document.getElementById('copyCaptionBtn').addEventListener('click', () => {
-            navigator.clipboard.writeText(state.socialCaption).then(() => {
-                showToast("Caption Copied!");
-            }, () => {
-                showToast("Failed to copy caption.");
-            });
-        });
-
 
         // --- PARTNER HUB LOGIC ---
         const PARTNERS_KEY = 'mortgage_builder_partners';
@@ -1552,9 +1297,6 @@
                 title: document.getElementById('agentTitle').value,
                 contact: document.getElementById('agentContact').value,
                 companyNmls: document.getElementById('companyNmls').value,
-                socialInsta: document.getElementById('socialInsta').value,
-                socialFb: document.getElementById('socialFb').value,
-                socialLi: document.getElementById('socialLi').value,
                 primaryColor: state.primaryColor,
                 secondaryColor: state.secondaryColor,
                 photo: photoData,
@@ -1609,11 +1351,15 @@
             document.getElementById('agentTitle').value = a.title || '';
             document.getElementById('agentContact').value = a.contact || '';
             document.getElementById('companyNmls').value = a.companyNmls || '';
-            document.getElementById('socialInsta').value = a.socialInsta || '';
-            document.getElementById('socialFb').value = a.socialFb || '';
-            document.getElementById('socialLi').value = a.socialLi || '';
             document.getElementById('primaryColor').value = a.primaryColor || '#0d3b66';
             document.getElementById('secondaryColor').value = a.secondaryColor || '#8d99ae';
+
+            state.agentName = a.name;
+            state.agentTitle = a.title || '';
+            state.agentContact = a.contact || '';
+            state.companyNmls = a.companyNmls || '';
+            state.primaryColor = a.primaryColor || '#0d3b66';
+            state.secondaryColor = a.secondaryColor || '#8d99ae';
 
             if (a.photo) {
                 state.images.agent = await loadImage(a.photo);
@@ -1656,9 +1402,6 @@
                 agentTitle: state.agentTitle,
                 agentContact: state.agentContact,
                 companyNmls: state.companyNmls,
-                socialInsta: state.socialInsta,
-                socialFb: state.socialFb,
-                socialLi: state.socialLi,
                 agentImage: state.images.agent && state.images.agent.src.startsWith('data:') ? state.images.agent.src : null,
                 logoImage: state.images.logo && state.images.logo.src.startsWith('data:') ? state.images.logo.src : null
             };
@@ -1674,9 +1417,6 @@
                     if(data.agentTitle) { document.getElementById('agentTitle').value = data.agentTitle; state.agentTitle = data.agentTitle; }
                     if(data.agentContact) { document.getElementById('agentContact').value = data.agentContact; state.agentContact = data.agentContact; }
                     if(data.companyNmls) { document.getElementById('companyNmls').value = data.companyNmls; state.companyNmls = data.companyNmls; }
-                    if(data.socialInsta) { document.getElementById('socialInsta').value = data.socialInsta; state.socialInsta = data.socialInsta; }
-                    if(data.socialFb) { document.getElementById('socialFb').value = data.socialFb; state.socialFb = data.socialFb; }
-                    if(data.socialLi) { document.getElementById('socialLi').value = data.socialLi; state.socialLi = data.socialLi; }
                     if(data.primaryColor) { document.getElementById('primaryColor').value = data.primaryColor; state.primaryColor = data.primaryColor; }
                     if(data.secondaryColor) { document.getElementById('secondaryColor').value = data.secondaryColor; state.secondaryColor = data.secondaryColor; }
                     if (data.agentImage) { 
@@ -1717,28 +1457,32 @@
                 drawPost();
                 
                 const overlay = document.getElementById('loading-overlay');
-                if(overlay) {
-                    overlay.classList.add('fade-out'); // Use class for fade
-                    setTimeout(() => overlay.classList.add('hidden'), 500);
-                }
+                if(overlay) overlay.classList.add('hidden');
                 
             } catch (e) {
                 console.error("Init failed:", e);
-                // Even on error, hide loader so user can see UI
-                const overlay = document.getElementById('loading-overlay');
-                if(overlay) overlay.classList.add('hidden');
+                document.getElementById('loading-overlay').classList.add('hidden');
             }
         }
 
-        // --- SAFETY VALVE: Force hide loader after 2s no matter what ---
         setTimeout(() => {
             const loader = document.getElementById('loading-overlay');
             if (loader && !loader.classList.contains('hidden')) {
                 console.warn("Forcing loader hide via safety timer");
-                loader.classList.add('fade-out');
-                setTimeout(() => loader.classList.add('hidden'), 500);
+                loader.classList.add('hidden');
             }
-        }, 2000);
+        }, 3000);
+
+        const textInputs = ['agentName', 'agentTitle', 'agentContact', 'companyNmls', 'statusText', 'borrowerStory', 'partnerName', 'partnerTitle', 'partnerContact', 'partnerShoutout', 'refiTitle', 'refiDetails', 'propertyDesc', 'ohDate', 'ohTime', 'ohAddress'];
+        textInputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', (e) => {
+                state[id] = e.target.value;
+                drawPost();
+            });
+            if(['agentName', 'agentTitle', 'agentContact', 'companyNmls'].includes(id)) {
+                document.getElementById(id).addEventListener('blur', saveProfile);
+            }
+        });
 
         ['primaryColor', 'secondaryColor'].forEach(id => {
             document.getElementById(id).addEventListener('input', (e) => {
@@ -1805,19 +1549,6 @@
 
         saveModal.addEventListener('click', (e) => {
             if(e.target === saveModal) saveModal.classList.remove('active');
-        });
-
-        // --- Help Modal Logic ---
-        helpBtn.addEventListener('click', () => {
-            helpModal.classList.add('active');
-        });
-
-        closeHelpBtn.addEventListener('click', () => {
-            helpModal.classList.remove('active');
-        });
-
-        helpModal.addEventListener('click', (e) => {
-            if(e.target === helpModal) helpModal.classList.remove('active');
         });
 
         document.getElementById('saveToolBtn').addEventListener('click', () => {
